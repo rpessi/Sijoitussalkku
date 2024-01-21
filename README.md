@@ -1,1 +1,2 @@
-# tsoha
+# Sovellus sijoitusten hallintaan
+Sovelluksen tarkoitus on säilyttää tietoja sijoituksista ja hyödyntää näitä tietoja veroilmoituksen täyttämisessä ja sijoitusten hallinnoinnissa ja suunnittelussa. Sovellukseen talletetaan tiedot osto- ja myyntitapahtumista eri arvo-osuustileiltä. Sovelluksen avulla pystytään yhdistelemään tietoja eri arvo-osuustileillä olevista sijoituksista ja näin saadaan hahmotettua kokonaistilanne. Sovelluksesta saatavia tietoja voidaan käyttää veroilmoituksen tietojen tarkistamiseen ja esitäytetyn veroilmoituksen täyttämiseen tilanteissa, jossa arvopaperisäilyttäjällä ei ole tietoa arvopapereiden hankintamenosta.

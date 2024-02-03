@@ -1,0 +1,39 @@
+{% extends "layout.html"%}
+{% block title %}Lisää tapahtuma{% endblock %}
+{% block content %}
+    <p>
+    Lisää osto- tai myyntitapahtuma. <br>
+    </p>
+    <form action="/event" method="POST">
+    Valitse tapahtuman tyyppi:
+    <p>
+    <input type="radio" name="event_type" value="buy"> Osto
+    <input type="radio" name="event_type" value="sell"> Myynti
+    <p>
+    Valitse tapahtuman omistaja:
+    <p>
+    <input type="radio" name="owner" value="Matti"> Matti
+    <input type="radio" name="owner" value="Maija"> Maija
+    <p>
+    Valitse tapahtuman tili:
+    <p>
+    <input type="radio" name="account" value="Nordea"> Nordea
+    <input type="radio" name="account" value="Danske"> Danske
+    <p>
+    Tapahtuman päivämäärä: <br>
+    <textarea name="date" rows="1" cols="20"></textarea>
+    Valitse osake:
+    <p>
+    <input type="radio" name="stock" value="Sampo"> Sampo
+    <input type="radio" name="stock" value="UPM"> UPM
+    <input type="radio" name="stock" value="Elisa"> Elisa
+    <p>
+    Kappalemäärä: <br>
+    <textarea name="number" rows="1" cols="20"></textarea>
+    <p>
+    Kappalehinta: <br>
+    <textarea name="price" rows="1" cols="20"></textarea>
+    <p>
+    <input type="submit" value="Lisää tapahtuma">
+    </form>
+{% endblock content %}

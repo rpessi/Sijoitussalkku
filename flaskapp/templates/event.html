@@ -1,0 +1,6 @@
+{% extends "layout.html"%}
+{% block title %}Lisää tapahtuma{% endblock %}
+{% block content %}
+Lisätty tapahtuma {{ event_type }} käyttäjän {{ owner }} tilille {{ account}}:<br>
+Päivämäärä: {{ date }}, osake: {{ stock }}, kpl: {{ number }}, hinta: {{ price }}
+{% endblock content %}

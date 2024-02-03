@@ -1,0 +1,19 @@
+{% extends "layout.html"%}
+{% block title %}Asetukset{% endblock %}
+{% block content %}
+    <p>
+    Lisää omistaja, tili tai osake.
+    </p>
+    <form action="/setup" method="POST">
+    Lisää:
+    <p>
+    <input type="radio" name="add_type" value="1"> Omistaja
+    <input type="radio" name="add_type" value="2"> Tili
+    <input type="radio" name="add_type" value="3"> Osake
+    <p>
+    Anna omistajan/osakkeen/tilin nimi: <br>
+    <textarea name="name" rows="1" cols="20"></textarea>
+    <p>
+    <input type="submit" value="Lisää">
+    </form>
+{% endblock content %}

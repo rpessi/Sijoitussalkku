@@ -18,7 +18,7 @@ def add_event(event_type, owner_name, account_name,
                             "number":number, "price":price})
         #kutsu pairing-funktiota ja päivitä buy-taulun sold-sarake
         #pairing pitää tehdä ennen myynnin kirjausta
-    else: #event_type == "buy"
+    else:
         sql = text("INSERT INTO buy_events (account_id, date, stock,\
                    number, price, sold) VALUES (:account_id, :date, :stock, \
                    :number, :price, :sold)")
@@ -28,11 +28,17 @@ def add_event(event_type, owner_name, account_name,
     db.session.commit()
     get_events()
 
-def get_events():
+def get_events(): #for test printing, trying to understand the database data types
     sqlb = text("SELECT * FROM buy_events")
     buy_events = db.session.execute(sqlb).fetchall()
     db.session.commit()
     for event in buy_events:
         print(event[3], float(event[5]))
 
+def pairing():
+    '''a function for pairing sell- and buy-events'''
+    pass
 
+def get_buy_events(owner_name, account_name, stock):
+    '''A helper-function for pairing'''
+    pass

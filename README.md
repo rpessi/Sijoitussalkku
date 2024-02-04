@@ -22,9 +22,17 @@ vielä näkyviin selaimeen, ne ovat nähtävissä vain psql-tulkilla.
 ### Sovelluksen käyttö
 Sovelluksen käyttö edellyttää projektin lataamista omalle koneelle. Sovellus vaatii toimiakseen myös
 Postgres-tietokannan. Lisäksi projektin juureen pitää lisätä tiedosto .env jonka sisällöksi tulee:
-DATABASE_URL=postgresql:///<käyttäjätunnus>
-SECRET_KEY=<oma salasana>
+```bash
+DATABASE_URL=postgresql:///<oma käyttäjätunnus>
+SECRET_KEY=<itsemuodostettu salasana>
+```
 
-Virtuaaliympäristö käynnistetään komennolla source venv/bin/activate ja sovellus käynnistyy flaskapp-
-hakemistotasolta komennolla flask run.
+Virtuaaliympäristö käynnistetään komennolla
+```
+source venv/bin/activate
+```
+ja sovellus käynnistyy flaskapp-hakemistotasolta komennolla 
+```
+flask run
+```
 

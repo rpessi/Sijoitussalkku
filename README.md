@@ -22,11 +22,12 @@ vielä näkyviin selaimeen, ne ovat nähtävissä vain psql-tulkilla.
 ### Sovelluksen käyttö
 Sovelluksen käyttö edellyttää projektin lataamista omalle koneelle. Sovellus vaatii toimiakseen myös
 Postgres-tietokannan. Lisäksi projektin juureen pitää lisätä tiedosto .env jonka sisällöksi tulee:
+```bash
 DATABASE_URL=postgresql:///<käyttäjätunnus>
 SECRET_KEY=<oma salasana>
 
 Virtuaaliympäristö käynnistetään komennoilla 
-bash```
+```
 python3 -m venv venv
 ```
 ```

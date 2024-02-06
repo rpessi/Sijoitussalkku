@@ -25,6 +25,22 @@ Postgres-tietokannan. Lisäksi projektin juureen pitää lisätä tiedosto .env 
 DATABASE_URL=postgresql:///<käyttäjätunnus>
 SECRET_KEY=<oma salasana>
 
-Virtuaaliympäristö käynnistetään komennolla source venv/bin/activate ja sovellus käynnistyy flaskapp-
-hakemistotasolta komennolla flask run.
+Virtuaaliympäristö käynnistetään komennoilla 
+bash```
+python3 -m venv venv
+```
+```
+source venv/bin/activate
+```
+```
+pip install -r requirements.txt
+```
+Tietokanta alustetaan komennolla
+```
+psql < schema.sql
+```
+ja sovellus käynnistyy flaskapp-hakemistotasolta komennolla
+```
+flask run
+```
 

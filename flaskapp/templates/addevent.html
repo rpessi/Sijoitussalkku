@@ -12,21 +12,24 @@
     <p>
     Valitse tapahtuman omistaja:
     <p>
-    <input type="radio" name="owner" value="Matti"> Matti
-    <input type="radio" name="owner" value="Maija"> Maija
+    {% for owner in owners %}
+    <input type="radio" name="owner" value={{owner}} > {{owner}}
+    {% endfor %}
     <p>
-    Valitse tapahtuman tili:
+    Valitse tapahtuman arvo-osuustili:
     <p>
-    <input type="radio" name="account" value="Nordea"> Nordea
-    <input type="radio" name="account" value="Danske"> Danske
+    {% for account in accounts %}
+    <input type="radio" name="account" value={{account}} > {{account}}
+    {% endfor %}
     <p>
     Tapahtuman päivämäärä: <br>
     <textarea name="date" rows="1" cols="20"></textarea>
+    <br>
     Valitse osake:
     <p>
-    <input type="radio" name="stock" value="Sampo"> Sampo
-    <input type="radio" name="stock" value="UPM"> UPM
-    <input type="radio" name="stock" value="Elisa"> Elisa
+    {% for stock in stocks %}
+    <input type="radio" name="stock" value={{stock}} > {{stock}}
+    {% endfor %}
     <p>
     Kappalemäärä: <br>
     <textarea name="number" rows="1" cols="20"></textarea>

@@ -1,0 +1,15 @@
+{% extends "layout.html"%}
+{% block title %}Lisää omistaja{% endblock %}
+{% block content %}
+    <form action="#" method="POST">
+        Omistajan nimi: <br>
+        <textarea name="owner" rows="1" cols="20"></textarea>
+        <input type="submit" value="Lisää omistaja">
+    </form>
+    Lisätyt omistajat:
+    <ul>
+        {% for owner in owners %}
+            <li>{{ owner }}</li>
+        {% endfor %}
+    </ul>
+{% endblock content %}

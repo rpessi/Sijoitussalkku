@@ -1,0 +1,21 @@
+{% extends "layout.html"%}
+{% block title %}Lisää tapahtuma{% endblock %}
+{% block content %}
+    <p>
+    Lisää omistajalle arvo-osuustili. <br>
+    </p>
+    <form action="#" method="POST">
+    <p>
+    Valitse omistaja:
+    </p>
+    <ul>
+    {% for owner in owners %}
+    <input type="radio" name="owner" value={{owner}} > {{owner}}
+    {% endfor %}
+    </ul>
+    Lisää arvo-osuustili:<br>
+    <textarea name="account" rows="1" cols="20"></textarea>
+    <p>
+    <input type="submit" value="Lisää arvo-osuustili">
+    </form>
+{% endblock content %}

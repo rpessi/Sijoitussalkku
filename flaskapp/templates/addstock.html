@@ -1,0 +1,16 @@
+{% extends "layout.html"%}
+{% block title %}Lisää tapahtuma{% endblock %}
+{% block content %}
+    <form action="#" method="POST">
+        Osakkeen nimi: <br>
+        <textarea name="stock" rows="1" cols="20"></textarea>
+        <input type="submit" value="Lisää osake">
+    </form>
+    <br>
+    Lisätyt osakkeet:
+    <ul>
+        {% for stock in stocks %}
+            <li>{{ stock }}</li>
+        {% endfor %}
+    </ul>
+{% endblock content %}

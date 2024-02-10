@@ -1,7 +1,7 @@
 # A module handling the web requests, posts and navigation
 from flaskapp.app import app
 from flaskapp.db import db
-from flask import flash, redirect, render_template, request
+from flask import redirect, render_template, request
 from services import events, setup as set, queries as que
 
 @app.route("/")

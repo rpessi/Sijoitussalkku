@@ -1,6 +1,6 @@
 from sqlalchemy import text
 from flaskapp.db import db
-import queries as que
+from services import queries as que
 
 def add_event(event_type, owner_name, account_name,
               date, stock, number, price):

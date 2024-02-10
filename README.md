@@ -3,21 +3,18 @@ Sovelluksen tarkoitus on säilyttää tietoja sijoituksista ja hyödyntää näi
 täyttämisessä sekä sijoitusten hallinnoinnissa ja suunnittelussa. 
 
 ### Toiminnallisuuksia, joita sovellukseen pyritään saamaan
-- Käyttäjä pystyy lisäämään sovellukseen (sijoitusten) omistajia
-- Käyttäjä pystyy lisäämään sovellukseen tilejä
-- Käyttäjä pystyy lisäämään sovellukseen osakkeita
-- Käyttäjä pystyy lisäämään nimetyn omistajan nimetylle tilille osakkeen osto- tai myyntitapahtuman
+- Käyttäjä pystyy lisäämään sovellukseen (sijoitusten) omistajia - toteutettu
+- Käyttäjä pystyy lisäämään sovellukseen valitulle omistajalle arvo-osuustilejä- toteutettu 
+- Käyttäjä pystyy lisäämään sovellukseen osakkeita - toteutettu
+- Käyttäjä pystyy lisäämään nimetyn omistajan nimetylle tilille nimetyn osakkeen osto- tai myyntitapahtuman - toteutettu
 - Käyttäjä pystyy hakemaan tiedon kunkin omistajan sijoituksista
 - Käyttäjä pystyy hakemaan tiedon kaikkien omistajien yhteisistä sijoituksista
-- Käyttäjä pystyy lisäämään sovellukseen lisätyille osakkeille näiden vuotuisen osingon määrän
+- Käyttäjä pystyy lisäämään sovellukseen lisätylle osakkeelle vuotuisen osingon määrän
 - Käyttäjä pystyy hakemaan tiedon kunkin omistajan saamista vuotuisista osingoista
 - Käyttäjä pystyy näkemään, mitkä osto- ja myyntitapahtumat liittyvät toisiinsa
 
 ### Sovelluksen tämänhetkinen tilanne
-Sovellus on aivan alkutekijöissään, eikä siinä ole juurikaan toiminnallisuutta. Ainoa toiminnallisuus
-on osto- tai myyntitapahtuman lisääminen. Toiminnallisuuteen liittyvät, vielä puuttuvat osat (omistajan,
-tilin ja osakkeen lisääminen) on korvattu kovakoodauksella. Tietokantaan talletettuja tietoja ei saa
-vielä näkyviin selaimeen, ne ovat nähtävissä vain psql-tulkilla. 
+Sovellukseen voi lisätä omistajia, arvo-osuustilejä ja osakkeita. Arvo-osuustilin lisääminen edellyttää, että ainakin yksi omistaja on lisätty. Kun sovelluksessa on lisättyjä omistajia, arvo-osuustilejä ja osakkeita, voi käyttäjä lisätä joko osto- tai myyntitapahtuman. Tapahtuman omistaja, tili ja osake valitaan tallennetuista vaihtoehdoista. Myynti- ja ostotapahtumien paritus FIFO-periaatteen mukaisesti on toteutettu tietokantatasolla. Kaikkien käyttäjän antamien syötteiden arvoista puuttuu validointi eikä sovelluksessa ole vielä tuotantokäytössä tarvittavaa tietoturvaa. Kunnollinen käyttöohje puuttuu. Ulkoasu on karu. 
 
 ### Sovelluksen käyttö
 Sovelluksen käyttö edellyttää projektin lataamista omalle koneelle. Sovellus vaatii toimiakseen myös
@@ -44,4 +41,3 @@ ja sovellus käynnistyy flaskapp-hakemistotasolta komennolla
 ```
 flask run
 ```
-

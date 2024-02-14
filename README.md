@@ -3,8 +3,9 @@ Sovelluksen tarkoitus on säilyttää tietoja sijoituksista ja hyödyntää näi
 täyttämisessä sekä sijoitusten hallinnoinnissa ja suunnittelussa. 
 
 ### Toiminnallisuuksia, joita sovellukseen pyritään saamaan
+- Käyttäjä pystyy luomaan käyttäjätunnuksen ja kirjautumaan sovellukseen - toteutettu
 - Käyttäjä pystyy lisäämään sovellukseen (sijoitusten) omistajia - toteutettu
-- Käyttäjä pystyy lisäämään sovellukseen valitulle omistajalle arvo-osuustilejä- toteutettu 
+- Käyttäjä pystyy lisäämään sovellukseen valitulle omistajalle arvo-osuustilejä - toteutettu 
 - Käyttäjä pystyy lisäämään sovellukseen osakkeita - toteutettu
 - Käyttäjä pystyy lisäämään nimetyn omistajan nimetylle tilille nimetyn osakkeen osto- tai myyntitapahtuman - toteutettu
 - Käyttäjä pystyy hakemaan tiedon kunkin omistajan sijoituksista
@@ -14,7 +15,12 @@ täyttämisessä sekä sijoitusten hallinnoinnissa ja suunnittelussa.
 - Käyttäjä pystyy näkemään, mitkä osto- ja myyntitapahtumat liittyvät toisiinsa
 
 ### Sovelluksen tämänhetkinen tilanne
-Sovellukseen voi lisätä omistajia, arvo-osuustilejä ja osakkeita. Arvo-osuustilin lisääminen edellyttää, että ainakin yksi omistaja on lisätty. Kun sovelluksessa on lisättyjä omistajia, arvo-osuustilejä ja osakkeita, voi käyttäjä lisätä joko osto- tai myyntitapahtuman. Tapahtuman omistaja, tili ja osake valitaan tallennetuista vaihtoehdoista. Myynti- ja ostotapahtumien paritus FIFO-periaatteen mukaisesti on toteutettu tietokantatasolla. Kaikkien käyttäjän antamien syötteiden arvoista puuttuu validointi eikä sovelluksessa ole vielä tuotantokäytössä tarvittavaa tietoturvaa. Kunnollinen käyttöohje puuttuu. Ulkoasu on karu. 
+Sovellukseen voi luoda käyttäjätunnuksen ja kirjautua. Sovellukseen voi lisätä omistajia, arvo-osuustilejä ja osakkeita.
+Arvo-osuustilin lisääminen edellyttää, että ainakin yksi omistaja on lisätty. Kun sovelluksessa on lisättyjä omistajia,
+arvo-osuustilejä ja osakkeita, voi käyttäjä lisätä joko osto- tai myyntitapahtuman. Tapahtuman omistaja, tili ja osake
+valitaan tietokantaan tallennetuista vaihtoehdoista. Myynti- ja ostotapahtumien paritus FIFO-periaatteen mukaisesti on
+toteutettu tietokantatasolla. Valtaosasta käyttäjän antamien syötteiden arvoista puuttuu validointi ja virheilmoitukset.
+Kunnollinen käyttöohje sovelluksen etusivulta puuttuu.
 
 ### Sovelluksen käyttö
 Sovelluksen käyttö edellyttää projektin lataamista omalle koneelle. Sovellus vaatii toimiakseen myös

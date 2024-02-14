@@ -1,17 +1,21 @@
 from flaskapp.db import db
+from flask import session, flash
 from sqlalchemy import text
 from services import queries as que
 
 '''A module for setting up names for owners and accounts'''
 
 def add_owner(name):
-    db_owners = que.owners_from_db()
+    username = session["username"]
+    db_owners = que.owners_from_db(username)
     if name not in db_owners:
-        sql = text("INSERT INTO owners (name) VALUES (:name)")
-        db.session.execute(sql, {"name":name})
+        user_id = que.get_user_id(username)
+        sql = text("INSERT INTO owners (name, user_id) VALUES (:name, :user_id)")
+        db.session.execute(sql, {"name":name, "user_id":user_id})
         db.session.commit()
         return True
     else:
+        flash("Ongelmaa setup.add_owner-funktiossa")
         return False
 
 def add_stock(name, dividend=0):
@@ -22,10 +26,11 @@ def add_stock(name, dividend=0):
         db.session.commit()
         return True
     else:
+        flash("add_stock feilasi")
         return False
 
 def add_account(name, owner):
-    owners = que.owners_from_db()
+    owners = que.owners_from_db(session["username"])
     owner_id = que.get_owner_id(owner)
     accounts = que.accounts_by_owner(owner_id)
     if name not in accounts:

@@ -1,11 +1,12 @@
 from flaskapp.db import db
 from sqlalchemy import text
 
-def get_account_id(account_name, owner_name): #under construction
+def get_account_id(account_name, owner_name): #under construction?
     sql = text("SELECT A.id FROM accounts A, owners O\
                WHERE A.owner_id = O.id AND O.name =:owner_name\
                AND A.name=:account_name")
-    id = db.session.execute(sql, {"owner_name":owner_name, "account_name":account_name}).fetchone()
+    id = db.session.execute(sql, {"owner_name":owner_name,
+                            "account_name":account_name}).fetchone()
     db.session.commit()
     return id[0]
 
@@ -35,6 +36,11 @@ def get_owner_id(name):
     owner_id = db.session.execute(sql, {"name":name}).fetchone()
     return owner_id[0]
 
+def get_user_id(username):
+    sql = text("SELECT id FROM users  WHERE username=:username")
+    user_id = db.session.execute(sql, {"username":username}).fetchone()
+    return user_id[0]
+
 def accounts_by_owner(owner_id):
     sql = text("SELECT name FROM accounts WHERE owner_id=:owner_id")
     accountdata = db.session.execute(sql, {"owner_id":owner_id}).fetchall()
@@ -43,25 +49,30 @@ def accounts_by_owner(owner_id):
         accountnames.append(account[0])
     return accountnames
 
-def owners_from_db():
-    sql = text("SELECT name FROM owners")
-    ownertuples = db.session.execute(sql).fetchall()
+def owners_from_db(username):
+    user_id = get_user_id(username)
+    sql = text("SELECT name FROM owners O, users U\
+               WHERE O.user_id = U.id AND U.id=:user_id")
+    ownertuples = db.session.execute(sql, {"user_id":user_id}).fetchall()
     db.session.commit()
     owners = []
     for owner in ownertuples:
         owners.append(owner[0])
     return owners
 
-def accounts_from_db():
-    sql = text("SELECT name FROM accounts")
-    accounttuples = db.session.execute(sql).fetchall()
+def accounts_from_db(username):
+    user_id = get_user_id(username)
+    sql = text("SELECT DISTINCT A.name FROM accounts A, owners O, users U\
+               WHERE A.owner_id = O.id AND U.id = O.user_id\
+               AND U.id=:user_id")
+    accounttuples = db.session.execute(sql, {"user_id":user_id}).fetchall()
     db.session.commit()
     accounts = []
     for account in accounttuples:
         accounts.append(account[0])
     return accounts
 
-def stocks_from_db():
+def stocks_from_db(): #todo, haku username:lla, vaatii scheman muutoksen
     sql = text("SELECT name FROM stocks")
     stocktuples = db.session.execute(sql).fetchall()
     db.session.commit()
@@ -88,7 +99,7 @@ def stocks_available_for_sell(account_id, stock):
                WHERE account_id =:account_id AND stock =:stock")
     result = db.session.execute(sql, {"account_id":account_id, 
                                       "stock":stock}).fetchone()
-    return result[0]
+    return int(result[0])
 
 def buys_for_pairing(account_id, stock):
     sql = text("SELECT B.id, B.date, B.stock, B.number, B.sold\
@@ -109,3 +120,17 @@ def get_sell_event_id(account_id, date, stock, number, price):
                         "stock":stock, "number":number, "price":price}).fetchone()
     db.session.commit()
     return result[0]
+
+def get_password(username):
+    sql = text("SELECT id, password FROM users WHERE username=:username")
+    result = db.session.execute(sql, {"username":username})
+    user = result.fetchone()
+    return user.password #tai user[1] jos ei toimi? mihin tarvii id:tä?
+
+def get_owner_account_pairs(username):
+    user_id = get_user_id(username)
+    sql = text("SELECT O.name, A.name FROM accounts A, owners O, users U\
+            WHERE A.owner_id = O.id AND U.id = O.user_id and U.id =:user_id")
+    pairs = db.session.execute(sql, {"user_id":user_id}).fetchall()
+    db.session.commit()
+    return pairs

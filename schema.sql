@@ -1,6 +1,13 @@
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(20),
+    password TEXT
+);
+
 CREATE TABLE owners (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(30)
+    name VARCHAR(30),
+    user_id INTEGER REFERENCES users
 );
 
 CREATE TABLE accounts (

@@ -10,16 +10,10 @@
     <input type="radio" name="event_type" value="buy"> Osto
     <input type="radio" name="event_type" value="sell"> Myynti
     <p>
-    Valitse tapahtuman omistaja:
+    Valitse tapahtuman omistaja ja arvo-osuustili: <br>
     <p>
-    {% for owner in owners %}
-    <input type="radio" name="owner" value={{owner}} > {{owner}}
-    {% endfor %}
-    <p>
-    Valitse tapahtuman arvo-osuustili:
-    <p>
-    {% for account in accounts %}
-    <input type="radio" name="account" value={{account}} > {{account}}
+    {% for owner, account in pairs %}
+    <input type="radio" name="pair" value="{{owner}}+{{account}}" > {{owner}}: {{account}}
     {% endfor %}
     <p>
     Tapahtuman päivämäärä: <br>
@@ -29,7 +23,7 @@
     Valitse osake:
     <p>
     {% for stock in stocks %}
-    <input type="radio" name="stock" value={{stock}} > {{stock}}
+    <input type="radio" name="stock" value="{{stock}}" > {{stock}}
     {% endfor %}
     <p>
     Kappalemäärä: <br>
@@ -39,5 +33,6 @@
     <textarea name="price" rows="1" cols="20"></textarea>
     <p>
     <input type="submit" value="Lisää tapahtuma">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
 {% endblock content %}

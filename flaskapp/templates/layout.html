@@ -9,11 +9,32 @@
 </head>
 <body>
     <h1>Sijoitus$alkku</h1>
-    <a href="/">Etusivu</a>
-    <a href="/setup">Asetukset</a>
-    <a href="/addevent">Tapahtuman lisäys</a>
+    {% if session.username %}
+    <p> Olet kirjautunut nimellä {{ session.username }}</p>
+    <div class="button-group">
+        <a href="/addowner">Lisää omistaja</a>
+        <a href="/addaccount">Lisää arvo-osuustili</a>
+        <a href="/addstock">Lisää osake</a>
+        <a href="/addevent">Lisää tapahtuma</a>
+    </div>
+    {% else %}
+    <form action="/login" method="POST">
+    <p>Käyttäjätunnus:</br>
+    <input type="text" name="username"></p>
+    <p>Salasana:<br>
+    <input type="password" name="password"></p>
+    <input type="submit" value="Kirjaudu">
+    </form>
+    <a href="/register">Luo tunnus</a>
+    {% endif %}
     <hr>
     {% block content %}{% endblock content %}
     <hr>
+    <div class="button-group">
+    <a href="/">Etusivulle</a>
+    {% if session.username %}
+    <a href="/logout">Kirjaudu ulos</a>
+    {% endif %}
+    </div>
 </body>
 </html>

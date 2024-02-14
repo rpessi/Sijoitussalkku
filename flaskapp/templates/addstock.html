@@ -6,6 +6,7 @@
         <textarea name="stock" rows="1" cols="20"></textarea>
         <p>
         <input type="submit" value="Lisää osake">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
     <br>
     Lisätyt osakkeet:

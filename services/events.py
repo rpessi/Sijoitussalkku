@@ -6,15 +6,20 @@ def add_event(event_type, owner_name, account_name,
               date, stock, number, price):
     account_id = que.get_account_id(account_name, owner_name)
     if event_type == "sell":
-        #todo, validate first
-        sql = text("INSERT INTO sell_events (account_id, date, stock,\
-                   number, price) VALUES (:account_id, :date, :stock, \
-                   :number, :price)")
-        db.session.execute(sql, {"account_id":account_id, "date":date,\
-                                "stock":stock, "number":number, "price":price})
-        db.session.commit()
-        sell_id = que.get_sell_event_id(account_id, date, stock, number, price)
-        pairing(account_id, stock, sell_id, number)
+        #todo, validate first, short selling not allowed!
+        available = que.stocks_available_for_sell(account_id, stock)
+        if available >= int(number):
+            sql = text("INSERT INTO sell_events (account_id, date, stock,\
+                    number, price) VALUES (:account_id, :date, :stock, \
+                    :number, :price)")
+            db.session.execute(sql, {"account_id":account_id, "date":date,\
+                                    "stock":stock, "number":number, "price":price})
+            db.session.commit()
+            sell_id = que.get_sell_event_id(account_id, date, stock, number, price)
+            pairing(account_id, stock, sell_id, number)
+        else:
+            #todo, error: No short selling allowed!
+            pass
     else:
         sql = text("INSERT INTO buy_events (account_id, date, stock,\
                    number, price, sold) VALUES (:account_id, :date, :stock, \

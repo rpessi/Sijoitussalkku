@@ -10,12 +10,20 @@
     </p>
     <ul>
     {% for owner in owners %}
-    <input type="radio" name="owner" value={{owner}} > {{owner}}
+    <input type="radio" name="owner" value="{{owner}}" > {{owner}}
     {% endfor %}
     </ul>
-    Lisää arvo-osuustili:<br>
+    Nimeä arvo-osuustili:<br>
     <textarea name="account" rows="1" cols="20"></textarea>
     <p>
     <input type="submit" value="Lisää arvo-osuustili">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
+    <p>
+    Lisätyt tilit: 
+    <ul>
+    {% for pair in pairs %}
+        <li>{{pair[0]}}: {{pair[1]}}</li>
+    {% endfor %}
+    </ul>
 {% endblock content %}

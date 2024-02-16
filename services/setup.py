@@ -1,9 +1,18 @@
-from flaskapp.db import db
-from flask import session, flash
+from flask import session
 from sqlalchemy import text
+from werkzeug.security import generate_password_hash
+from flaskapp.db import db
 from services import queries as que
 
-'''A module for setting up names for owners and accounts'''
+'''A module for adding user and basic settings'''
+
+def add_user(username, password):
+    #todo, check if user already exists
+    pwd_hashed = generate_password_hash(password)
+    sql = text("INSERT INTO users (username, password)\
+               VALUES (:username, :password)")
+    db.session.execute(sql, {"username":username, "password":pwd_hashed})
+    db.session.commit()
 
 def add_owner(name):
     username = session["username"]
@@ -15,7 +24,6 @@ def add_owner(name):
         db.session.commit()
         return True
     else:
-        flash("Ongelmaa setup.add_owner-funktiossa")
         return False
 
 def add_stock(name, dividend=0):
@@ -26,7 +34,6 @@ def add_stock(name, dividend=0):
         db.session.commit()
         return True
     else:
-        flash("add_stock feilasi")
         return False
 
 def add_account(name, owner):

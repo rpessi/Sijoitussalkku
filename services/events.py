@@ -1,33 +1,37 @@
 from sqlalchemy import text
 from flaskapp.db import db
-from services import queries as que
+from services import queries as que, validate as val
 
 def add_event(event_type, owner_name, account_name,
               date, stock, number, price):
     account_id = que.get_account_id(account_name, owner_name)
     if event_type == "sell":
-        #todo, validate first, short selling not allowed!
-        available = que.stocks_available_for_sell(account_id, stock)
-        if available >= int(number):
-            sql = text("INSERT INTO sell_events (account_id, date, stock,\
-                    number, price) VALUES (:account_id, :date, :stock, \
-                    :number, :price)")
-            db.session.execute(sql, {"account_id":account_id, "date":date,\
-                                    "stock":stock, "number":number, "price":price})
-            db.session.commit()
-            sell_id = que.get_sell_event_id(account_id, date, stock, number, price)
-            pairing(account_id, stock, sell_id, number)
-        else:
-            #todo, error: No short selling allowed!
-            pass
+        result, error_msg = val.validate_sell(account_id, date, stock,
+                                        number, price)
+        print("result, msg", result, error_msg)
+        if not result:
+            return (False, error_msg)
+        sql = text("INSERT INTO sell_events (account_id, date, stock,\
+                number, price) VALUES (:account_id, :date, :stock, \
+                :number, :price)")
+        db.session.execute(sql, {"account_id":account_id, "date":date,\
+                                "stock":stock, "number":number, "price":price})
+        db.session.commit()
+        sell_id = que.get_sell_event_id(account_id, date, stock, number, price)
+        pairing(account_id, stock, sell_id, number)
+        return (True, "")
     else:
+        result, error_msg = val.validate_buy(date, number, price)
+        print("result, msg", result, error_msg)
+        if not result:
+            return (False, error_msg)
         sql = text("INSERT INTO buy_events (account_id, date, stock,\
                    number, price, sold) VALUES (:account_id, :date, :stock, \
                    :number, :price, :sold)")
-
         db.session.execute(sql, {"account_id":account_id, "date":date, "stock":stock,\
                             "number":number, "price":price, "sold":0})
         db.session.commit()
+        return (True, "")
 
 def pairing(account_id, stock, sell_id, number):
     '''a function for pairing sell- and buy-events'''

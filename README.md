@@ -26,7 +26,7 @@ Kunnollinen käyttöohje sovelluksen etusivulta puuttuu.
 Sovelluksen käyttö edellyttää projektin lataamista omalle koneelle. Sovellus vaatii toimiakseen myös
 Postgres-tietokannan. Lisäksi projektin juureen pitää lisätä tiedosto .env jonka sisällöksi tulee:
 ```bash
-DATABASE_URL=postgresql:///<oma käyttäjätunnus>
+DATABASE_URL=postgresql+psycopg2:///<oma käyttäjätunnus>
 SECRET_KEY=<itsemuodostettu salasana>
 ```
 Virtuaaliympäristö käynnistetään komennoilla 

@@ -16,7 +16,10 @@ def get_full_buy_events():
                 WHERE O.id = A.owner_id AND B.account_id = A.id")
     buy_events = db.session.execute(sqlb).fetchall()
     db.session.commit()
-    return buy_events
+    if buy_events == None:
+        return []
+    else:
+        return buy_events
 
 def get_buy_events(owner_name, account_name, stock):
     '''For showing the events for the user'''
@@ -30,6 +33,14 @@ def get_buy_events(owner_name, account_name, stock):
                     "stock":stock, "owner_name":owner_name}).fetchall()
     db.session.commit()
     return buy_events
+
+def check_user_exists(username):
+    sql = text("SELECT username FROM users WHERE username=:username")
+    user = db.session.execute(sql, {"username":username}).fetchone()
+    if user == None:
+        return False
+    else:
+        return user[0] == username
 
 def get_owner_id(name):
     sql = text("SELECT id FROM owners  WHERE name=:name")
@@ -95,10 +106,13 @@ def owner_stock_account_exists():
     return True
 
 def stocks_available_for_sell(account_id, stock):
-    sql = text("SELECT SUM(number) - SUM(sold) FROM buy_events\
+    sql = text("SELECT SUM(number) - SUM(sold) as available\
+               FROM buy_events\
                WHERE account_id =:account_id AND stock =:stock")
     result = db.session.execute(sql, {"account_id":account_id, 
                                       "stock":stock}).fetchone()
+    if result.available == None:
+        return 0
     return int(result[0])
 
 def buys_for_pairing(account_id, stock):
@@ -125,12 +139,33 @@ def get_password(username):
     sql = text("SELECT id, password FROM users WHERE username=:username")
     result = db.session.execute(sql, {"username":username})
     user = result.fetchone()
-    return user.password #tai user[1] jos ei toimi? mihin tarvii id:tä?
+    return user.password
 
 def get_owner_account_pairs(username):
     user_id = get_user_id(username)
     sql = text("SELECT O.name, A.name FROM accounts A, owners O, users U\
             WHERE A.owner_id = O.id AND U.id = O.user_id and U.id =:user_id")
     pairs = db.session.execute(sql, {"user_id":user_id}).fetchall()
-    db.session.commit()
     return pairs
+
+def get_years_with_sell_events():
+    #todo: fix so that depends on username
+    sql = text("SELECT DISTINCT EXTRACT(year FROM date) FROM sell_events;")
+    results = db.session.execute(sql).fetchall()
+    years = []
+    for result in results:
+        years.append(result[0])
+    return years
+
+def sell_events_by_year(selected_year, username):
+    user_id = get_user_id(username)
+    sql = text("SELECT O.name as owner, A.name as account, B.date as buydate, B.stock,\
+                P.number, B.price as buyprice, S.date as selldate, S.price as sellprice\
+                FROM owners O, accounts A, buy_events B, sell_events S, users U, pairing P\
+                WHERE O.user_id = U.id AND A.owner_id = O.id AND S.account_id = A.id\
+                AND P.sell_id = S.id AND P.buy_id = B.id\
+                AND EXTRACT(year FROM S.date) =:selected_year AND U.id =:user_id\
+                ORDER BY owner, account, B.stock, selldate ASC")
+    results = db.session.execute(sql, {"selected_year":selected_year, "user_id":user_id}).fetchall()
+    print("ekarivi", results[0])
+    return results

@@ -1,0 +1,20 @@
+{% extends "layout.html"%}
+{% block title %}Näytä myyntitapahtumat{% endblock %}
+{% block content %}
+<p>
+Valitse vuosi, jonka myyntitapahtumat haluat nähdä.<br>
+</p>
+<form action="#" method="POST">
+{% for year in years %}
+<input type="radio" name="year" value="{{year}}" > {{year}}
+{% endfor %}
+<input type="submit" value="Hae tapahtumat">
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+</form>
+Vuoden {{selected_year}} myyntitapahtumat:
+<ul>
+    {% for event in events %}
+        <li>{{ event }}</li>
+    {% endfor %}
+</ul>
+{% endblock content %}

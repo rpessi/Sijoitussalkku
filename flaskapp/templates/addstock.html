@@ -9,10 +9,12 @@
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
     <br>
+    {% if stocks is defined %}
     Lisätyt osakkeet:
     <ul>
         {% for stock in stocks %}
             <li>{{ stock }}</li>
         {% endfor %}
     </ul>
+    {% endif %}
 {% endblock content %}

@@ -21,12 +21,13 @@ h1 {
     background-color: #6096B4;
     text-align: center;
     font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
     padding: 14px 25px;
     border-radius: 15px;
 }
 
 input[type=submit] {
-    background-color: #BDCDD6;
+    background-color: #93BFCF;
     font-family: 'Courier New', Courier, monospace;
     border: none;
     color: black;

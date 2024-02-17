@@ -148,13 +148,18 @@ def get_owner_account_pairs(username):
     pairs = db.session.execute(sql, {"user_id":user_id}).fetchall()
     return pairs
 
-def get_years_with_sell_events():
-    #todo: fix so that depends on username
-    sql = text("SELECT DISTINCT EXTRACT(year FROM date) FROM sell_events;")
-    results = db.session.execute(sql).fetchall()
+def get_years_with_sell_events(username):
+    user_id = get_user_id(username)
+    sql = text("SELECT DISTINCT EXTRACT(year FROM S.date) as year\
+               FROM sell_events S, accounts A, owners O, users U\
+               WHERE S.account_id = A.id AND A.owner_id = O.id\
+               AND O.user_id = U.id AND U.id =:user_id")
+    results = db.session.execute(sql, {"user_id":user_id}).fetchall()
     years = []
-    for result in results:
-        years.append(result[0])
+    print("results", results)
+    if results != None:
+        for result in results:
+            years.append(result[0])
     return years
 
 def sell_events_by_year(selected_year, username):
@@ -167,5 +172,14 @@ def sell_events_by_year(selected_year, username):
                 AND EXTRACT(year FROM S.date) =:selected_year AND U.id =:user_id\
                 ORDER BY owner, account, B.stock, selldate ASC")
     results = db.session.execute(sql, {"selected_year":selected_year, "user_id":user_id}).fetchall()
-    print("ekarivi", results[0])
-    return results
+    results_formatted = []
+    for row in results:
+        owner, account = row.owner, row.account
+        buydate = f"{row.buydate.day}.{row.buydate.month}.{row.buydate.year}"
+        stock, number, buyprice = row.stock, row.number, row.buyprice
+        selldate = f"{row.selldate.day}.{row.selldate.month}.{row.selldate.year}"
+        sellprice = row.sellprice
+        string = f"{owner:20}{account:>20}: osto {buydate:15}{stock:20}{number:6}kpl á{buyprice:7}€,\
+                    myynti {selldate:15}á{sellprice:7}€"
+        results_formatted.append(string)
+    return results_formatted

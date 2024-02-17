@@ -1,5 +1,6 @@
 '''A module for validating user inputs and actions'''
 from werkzeug.security import check_password_hash
+from flask import request
 from datetime import date
 from services import queries as que
 
@@ -54,6 +55,13 @@ def stock_price_input(price):
         return False
     for number in numbers:
         if not number.isdecimal():
+            return False
+    return True
+
+def check_selection(selection):
+    '''Checks for empty values or missing selections'''
+    for value in selection:
+        if not request.form.get(value):
             return False
     return True
 

@@ -11,10 +11,13 @@ Valitse vuosi, jonka myyntitapahtumat haluat nähdä.<br>
 <input type="submit" value="Hae tapahtumat">
 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
+<br>
+{% if selected_year is defined %}
 Vuoden {{selected_year}} myyntitapahtumat:
 <ul>
     {% for event in events %}
         <li>{{ event }}</li>
     {% endfor %}
 </ul>
+{% endif %}
 {% endblock content %}

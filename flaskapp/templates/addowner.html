@@ -8,10 +8,12 @@
         <input type="submit" value="Lisää omistaja">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
+    {% if owners is defined %}
     Lisätyt omistajat:
     <ul>
         {% for owner in owners %}
             <li>{{ owner }}</li>
         {% endfor %}
     </ul>
+    {% endif %}
 {% endblock content %}

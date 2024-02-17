@@ -13,6 +13,10 @@ def index():
 
 @app.route("/login", methods=["POST"])
 def login():
+    selection = ["username", "password"]
+    if not val.check_selection(selection):
+        flash("Täytä molemmat kentät.")
+        return redirect("/")
     username = request.form["username"]
     password = request.form["password"]
     #todo: validate.user(username, password)
@@ -29,6 +33,10 @@ def register():
     if request.method == "GET":
         return render_template("register.html")
     if request.method == "POST":
+        selection = ["username", "password", "pwd_check"]
+        if not val.check_selection(selection):
+            flash("Täytä kaikki kentät.")
+            return redirect("/register")
         username = request.form["username"]
         password = request.form["password"]
         pwd_check = request.form["pwd_check"]
@@ -57,6 +65,9 @@ def addowner():
         if session["csrf_token"] != request.form["csrf_token"]:
             flash("Tokenisssa ongelmaa")
             abort(403)
+        if not request.form.get("owner"):
+            flash("Täytä kenttä.")
+            return redirect("/addowner")
         owner = request.form["owner"]
         result = set.add_owner(owner)
         if result == True:
@@ -73,6 +84,9 @@ def addstock():
     if request.method == "POST":
         if session["csrf_token"] != request.form["csrf_token"]:
             abort(403)
+        if not request.form.get("stock"):
+            flash("Täytä kenttä.")
+            return redirect("/addstock")
         stock = request.form["stock"]
         result = set.add_stock(stock)
         if result == True: #success
@@ -90,6 +104,10 @@ def addaccount():
     if request.method == "POST":
         if session["csrf_token"] != request.form["csrf_token"]:
             abort(403)
+        selection = ["owner", "account"]
+        if not val.check_selection(selection):
+            flash("Valitse omistaja ja täytä kenttä.")
+            return redirect("/addaccount")
         owner = request.form["owner"]
         account = request.form["account"]
         result = set.add_account(account, owner)
@@ -116,6 +134,11 @@ def addevent():
 def event():
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
+    selection = ["event_type", "pair", "date", "stock",
+                 "number", "price"]
+    if not val.check_selection(selection):
+        flash("Suorita kaikki valinnat ja täytä kentät.")
+        return redirect("/addevent")
     event_type = request.form["event_type"]
     pair = request.form["pair"]
     pair = pair.split("+")
@@ -125,7 +148,6 @@ def event():
     stock = request.form["stock"]
     number = request.form["number"]
     price = request.form["price"].replace(",", ".")
-    #price = price.replace(",", ".")
     if event_type == "buy":
         type = "osto"
     else:
@@ -142,8 +164,8 @@ def event():
 
 @app.route("/sell_events", methods=["GET", "POST"])
 def sell_events():
-    #todo: fix so that depends on username, pass username
-    years = que.get_years_with_sell_events()
+    username = session["username"]
+    years = que.get_years_with_sell_events(username)
     if request.method =="GET":
         if years == []:
             flash("Myyntitapahtumia ei ole.")
@@ -152,8 +174,10 @@ def sell_events():
     if request.method == "POST":
         if session["csrf_token"] != request.form["csrf_token"]:
             abort(403)
+        if not request.form.get("year"):
+            flash("Valitse vuosi.")
+            return redirect("/sell_events")
         selected_year = request.form["year"]
-        username = session["username"]
         sell_events = que.sell_events_by_year(selected_year, username)
         return render_template("sell_events.html", years=years,
             selected_year=selected_year, events=sell_events)
@@ -162,7 +186,7 @@ def sell_events():
 def holdings():
     if request.method == "GET":
         #todo, luo queries-tiedostoon funktio ja kutsu sitä
-        return render_template("holdings.html") #lomake
+        return render_template("holdings.html") #todo: lomake
     if request.method == "POST":
         if session["csrf_token"] != request.form["csrf_token"]:
             abort(403)

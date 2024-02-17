@@ -12,7 +12,7 @@ def add_event(event_type, owner_name, account_name,
         if not result:
             return (False, error_msg)
         date = fix_date_format(date)
-	sql = text("INSERT INTO sell_events (account_id, date, stock,\
+        sql = text("INSERT INTO sell_events (account_id, date, stock,\
                 number, price) VALUES (:account_id, :date, :stock, \
                 :number, :price)")
         db.session.execute(sql, {"account_id":account_id, "date":date,\
@@ -26,7 +26,7 @@ def add_event(event_type, owner_name, account_name,
         print("result, msg", result, error_msg)
         if not result:
             return (False, error_msg)
-	date = fix_date_format(date)
+        date = fix_date_format(date)
         sql = text("INSERT INTO buy_events (account_id, date, stock,\
                    number, price, sold) VALUES (:account_id, :date, :stock, \
                    :number, :price, :sold)")

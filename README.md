@@ -8,19 +8,20 @@ täyttämisessä sekä sijoitusten hallinnoinnissa ja suunnittelussa.
 - Käyttäjä pystyy lisäämään sovellukseen valitulle omistajalle arvo-osuustilejä - toteutettu 
 - Käyttäjä pystyy lisäämään sovellukseen osakkeita - toteutettu
 - Käyttäjä pystyy lisäämään nimetyn omistajan nimetylle tilille nimetyn osakkeen osto- tai myyntitapahtuman - toteutettu
-- Käyttäjä pystyy hakemaan tiedon kunkin omistajan sijoituksista
-- Käyttäjä pystyy hakemaan tiedon kaikkien omistajien yhteisistä sijoituksista
+- Käyttäjä pystyy katsomaan tiedot kaikkien omistajien sijoituksista, eriteltynä omistajakohtaisesti - toteutettu
+- Käyttäjä pystyy näkemään, mitkä vuosittaiset osto- ja myyntitapahtumat liittyvät toisiinsa - toteutettu
 - Käyttäjä pystyy lisäämään sovellukseen lisätylle osakkeelle vuotuisen osingon määrän
 - Käyttäjä pystyy hakemaan tiedon kunkin omistajan saamista vuotuisista osingoista
-- Käyttäjä pystyy näkemään, mitkä osto- ja myyntitapahtumat liittyvät toisiinsa
 
 ### Sovelluksen tämänhetkinen tilanne
 Sovellukseen voi luoda käyttäjätunnuksen ja kirjautua. Sovellukseen voi lisätä omistajia, arvo-osuustilejä ja osakkeita.
 Arvo-osuustilin lisääminen edellyttää, että ainakin yksi omistaja on lisätty. Kun sovelluksessa on lisättyjä omistajia,
 arvo-osuustilejä ja osakkeita, voi käyttäjä lisätä joko osto- tai myyntitapahtuman. Tapahtuman omistaja, tili ja osake
-valitaan tietokantaan tallennetuista vaihtoehdoista. Myynti- ja ostotapahtumien paritus FIFO-periaatteen mukaisesti on
-toteutettu tietokantatasolla. Valtaosasta käyttäjän antamien syötteiden arvoista puuttuu validointi ja virheilmoitukset.
-Kunnollinen käyttöohje sovelluksen etusivulta puuttuu.
+valitaan tietokantaan tallennetuista vaihtoehdoista. Käyttäjä pystyy katsomaan vuosittaiset myyntitapahtumat, jotka on
+kohdistettu FIFO-periaatteen mukaisiin ostoeriin. Käyttäjä pystyy katsomaan kootut tiedot omistajien osakeomistuksista. 
+
+### Sovelluksen toimintaa havainnollistava kaavio
+![](flaskapp/static/Toimintakaavio.png)
 
 ### Sovelluksen käyttö
 Sovelluksen käyttö edellyttää projektin lataamista omalle koneelle. Sovellus vaatii toimiakseen myös

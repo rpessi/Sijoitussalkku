@@ -66,5 +66,5 @@ def update_pairing_table(buy_id, sell_id, number):
 
 def fix_date_format(date:str):
     parts = date.split(".")
-    return f"{parts[2].parts[1].parts[0]}"
+    return f"{parts[2]-parts[1]-parts[0]}"
 

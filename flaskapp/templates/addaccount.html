@@ -14,7 +14,7 @@
     {% endfor %}
     </ul>
     Nimeä arvo-osuustili:<br>
-    <textarea name="account" rows="1" cols="20"></textarea>
+    <textarea name="account" rows="1" cols="20" required></textarea>
     <p>
     <input type="submit" value="Lisää arvo-osuustili">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">

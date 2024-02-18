@@ -1,8 +1,9 @@
-'''A module for validating user inputs and actions'''
 from werkzeug.security import check_password_hash
 from flask import request
 from datetime import date
 from services import queries as que
+
+'''A module for validating user inputs and actions'''
 
 def validate_login(username, password):
     if que.check_user_exists(username):
@@ -80,4 +81,3 @@ def stock_name_input(stock:str):
 def owner_has_account(account, owner):
     #todo: check if owner has the given account
     pass
-

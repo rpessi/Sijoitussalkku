@@ -8,7 +8,6 @@ def add_event(event_type, owner_name, account_name,
     if event_type == "sell":
         result, error_msg = val.validate_sell(account_id, date, stock,
                                         number, price)
-        print("result, msg", result, error_msg)
         if not result:
             return (False, error_msg)
         sql = text("INSERT INTO sell_events (account_id, date, stock,\
@@ -22,7 +21,6 @@ def add_event(event_type, owner_name, account_name,
         return (True, "")
     else:
         result, error_msg = val.validate_buy(date, number, price)
-        print("result, msg", result, error_msg)
         if not result:
             return (False, error_msg)
         sql = text("INSERT INTO buy_events (account_id, date, stock,\

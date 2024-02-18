@@ -1,7 +1,6 @@
 '''A module handling the web requests, posts and navigation'''
 import secrets
 from flaskapp.app import app
-from flaskapp.db import db
 from flask import redirect, render_template, request
 from flask import session, abort, flash
 from services import events, setup as set, queries as que
@@ -19,7 +18,6 @@ def login():
         return redirect("/")
     username = request.form["username"]
     password = request.form["password"]
-    #todo: validate.user(username, password)
     if val.validate_login(username, password):
         session["username"] = username
         session["csrf_token"] = secrets.token_hex(16)
@@ -89,7 +87,7 @@ def addstock():
             return redirect("/addstock")
         stock = request.form["stock"]
         result = set.add_stock(stock)
-        if result == True: #success
+        if result == True:
             return redirect("/addstock")
         else:
             flash("Osake on jo lisätty.")
@@ -115,7 +113,6 @@ def addaccount():
             flash("Tilin lisäys onnistui")
             return redirect("/addaccount")
         else:
-            #todo, error
             flash("Tilin lisäys ei onnistunut")
             return redirect("/addaccount")
     else:
@@ -182,12 +179,12 @@ def sell_events():
         return render_template("sell_events.html", years=years,
             selected_year=selected_year, events=sell_events)
 
-@app.route("/holdings", methods=["GET", "POST"])
+@app.route("/holdings", methods=["GET"])
 def holdings():
+    username = session["username"]
     if request.method == "GET":
-        #todo, luo queries-tiedostoon funktio ja kutsu sitä
-        return render_template("holdings.html") #todo: lomake
-    if request.method == "POST":
-        if session["csrf_token"] != request.form["csrf_token"]:
-            abort(403)
-        #todo
+        report = que.holdings_report(username)
+        if report == []:
+            flash("Lisäämilläsi omistajilla ei ole omistuksia.")
+            return redirect("/")
+        return render_template("holdings.html", report=report)

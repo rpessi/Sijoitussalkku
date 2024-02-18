@@ -7,10 +7,9 @@ from services import queries as que
 '''A module for adding user and basic settings'''
 
 def add_user(username, password):
-    #todo, check if user already exists
     pwd_hashed = generate_password_hash(password)
-    sql = text("INSERT INTO users (username, password)\
-               VALUES (:username, :password)")
+    sql = text("""INSERT INTO users (username, password)
+               VALUES (:username, :password)""")
     db.session.execute(sql, {"username":username, "password":pwd_hashed})
     db.session.commit()
 
@@ -49,13 +48,3 @@ def add_account(name, owner):
     else:
         #todo, error
         return False
-
-
-
-
-
-
-
-
-
-

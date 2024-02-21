@@ -23,24 +23,24 @@ def validate_sell(account_id, date_str, stock, number, price):
         return (False, "Osakkeen hinta on virheellinen")
     return (True, "")
 
-def validate_buy(date, number, price):
+def validate_buy(date_str, number, price):
     if not number.isdecimal():
         return (False, "Osakkeiden määrä ei ole kokonaisluku.")
-    if not date_input(date):
+    if not date_input(date_str):
         return (False, "Päivämäärä on virheellinen.")
     if not stock_price_input(price):
         return (False, "Osakkeen hinta on virheellinen")
     return (True, "")
 
-def date_input(date_input):
-    list = date_input.split(".")
+def date_input(date_str):
+    parts = date_str.split(".")
     today = date.today()
-    if len(list) != 3:
+    if len(parts) != 3:
         return False
-    for number in list:
+    for number in parts:
         if not number.isdecimal():
             return False
-    day, month, year= int(list[0]), int(list[1]), int(list[2])
+    day, month, year = int(parts[0]), int(parts[1]), int(parts[2])
     if day < 1 or day > 31:
         return False
     if month < 1 or month > 12:
@@ -51,8 +51,6 @@ def date_input(date_input):
 
 def stock_price_input(price):
     numbers = price.split(".")
-    if len(numbers) > 2:
-        return False
     for number in numbers:
         if not number.isdecimal():
             return False
@@ -64,15 +62,3 @@ def check_selection(selection):
         if not request.form.get(value):
             return False
     return True
-
-def owner_name_input(owner:str):
-    #todo: length, main function checks for availability
-    pass
-
-def account_name_input(account:str):
-    #todo: length
-    pass
-
-def stock_name_input(stock:str):
-    #todo: length, main function checks for availability
-    pass

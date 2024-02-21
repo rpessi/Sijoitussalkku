@@ -20,10 +20,12 @@
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
     <p>
+    {% if pairs %}
     Lisätyt tilit: 
-    <ul>
-    {% for pair in pairs %}
-        <li>{{pair[0]}}: {{pair[1]}}</li>
-    {% endfor %}
-    </ul>
+        <ul>
+        {% for pair in pairs %}
+            <li>{{pair[0]}}: {{pair[1]}}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
 {% endblock content %}

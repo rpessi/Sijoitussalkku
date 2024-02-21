@@ -8,5 +8,6 @@
 <p>Salasana uudelleen:<br>
 <input type="password" name="pwd_check" required></p>
 <input type="submit" value="Luo tunnus">
+<input type="hidden" name="pre_token" value="{{ session.pre_token }}">
 </form>
 {% endblock content %}

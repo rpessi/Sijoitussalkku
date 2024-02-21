@@ -8,10 +8,13 @@ from flaskapp.app import app
 
 @app.route("/")
 def index():
+    session["pre_token"] = secrets.token_hex(16)
     return render_template("index.html")
 
 @app.route("/login", methods=["POST"])
 def login():
+    if session["pre_token"] != request.form["pre_token"]:
+        abort(403)
     selection = ["username", "password"]
     if not val.check_selection(selection):
         flash("Täytä molemmat kentät.")
@@ -30,6 +33,8 @@ def register():
     if request.method == "GET":
         return render_template("register.html")
     if request.method == "POST":
+        if session["pre_token"] != request.form["pre_token"]:
+            abort(403)
         selection = ["username", "password", "pwd_check"]
         if not val.check_selection(selection):
             flash("Täytä kaikki kentät.")
@@ -51,6 +56,7 @@ def register():
 def logout():
     del session["username"]
     del session["csrf_token"]
+    del session["pre_token"]
     flash("Olet kirjautunut ulos.")
     return redirect("/")
 
@@ -69,11 +75,14 @@ def addowner():
             return redirect("/addowner")
         flash("Omistaja on jo lisätty.")
         return redirect("/addowner")
-    return render_template("addowner.html", owners=owners)
+    if request.method == "GET":
+        #if owners == []:
+        #    render_template("addowner.html")
+        return render_template("addowner.html", owners=owners)
 
 @app.route("/addstock", methods=["GET", "POST"])
 def addstock():
-    stocks = que.stocks_from_db()
+    stocks = que.stocks_from_db(session["username"])
     if request.method == "POST":
         if session["csrf_token"] != request.form["csrf_token"]:
             abort(403)
@@ -88,10 +97,41 @@ def addstock():
         return redirect("/addstock")
     return render_template("addstock.html", stocks=stocks)
 
+@app.route("/add_dividend", methods=["GET", "POST"])
+def add_dividend():
+    stocks = que.stocks_from_db(session["username"])
+    if not stocks:
+        flash("Lisää ensin osake.")
+        return redirect("/addstock")
+    dividends = que.dividends_from_db(session["username"])
+    if request.method == "GET":
+        return render_template("add_dividend.html", stocks=stocks,
+                            dividends=dividends)
+    if request.method == "POST":
+        if session["csrf_token"] != request.form["csrf_token"]:
+            abort(403)
+        selection = ["stock", "dividend"]
+        if not val.check_selection(selection):
+            flash("Valitse osake ja täytä kenttä.")
+            return redirect("/add_dividend")
+        stock = request.form["stock"]
+        dividend = request.form["dividend"].replace(",", ".")
+        if not val.stock_price_input(dividend):
+            flash("Anna osinko numeroina.")
+            return redirect("/add_dividend")
+        setup.add_dividend(stock, dividend)
+        return redirect ("/add_dividend")
+
 @app.route("/addaccount", methods=["GET", "POST"])
 def addaccount():
     owners = que.owners_from_db(session["username"])
     pairs = que.get_owner_account_pairs(session["username"])
+    if request.method == "GET":
+        if not owners:
+            flash("Lisää ensin omistaja.")
+            return redirect("/addowner")
+        return render_template("addaccount.html", owners=owners,
+                               pairs=pairs)
     if request.method == "POST":
         if session["csrf_token"] != request.form["csrf_token"]:
             abort(403)
@@ -107,14 +147,18 @@ def addaccount():
             return redirect("/addaccount")
         flash("Tilin lisäys ei onnistunut")
         return redirect("/addaccount")
-    return render_template("addaccount.html", owners=owners,
-                               pairs=pairs)
 
 @app.route("/addevent", methods=["GET"])
 def addevent():
     username = session["username"]
     pairs = que.get_owner_account_pairs(username)
-    stocks = que.stocks_from_db()
+    stocks = que.stocks_from_db(username)
+    if not pairs:
+        flash("Lisää ensin arvo-osuustili.")
+        return redirect("/addaccount")
+    if not stocks:
+        flash("Lisää ensin osake.")
+        return redirect("/addstock")
     return render_template("addevent.html", stocks=stocks,
                            pairs=pairs)
 

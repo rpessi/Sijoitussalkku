@@ -25,10 +25,13 @@ def add_owner(name):
     return False
 
 def add_stock(name, dividend=0):
-    db_stocks = que.stocks_from_db()
+    username = session["username"]
+    db_stocks = que.stocks_from_db(username)
     if name not in db_stocks:
-        sql = text("INSERT INTO stocks (name, dividend) VALUES (:name, :dividend)")
-        db.session.execute(sql, {"name":name, "dividend":dividend})
+        user_id = que.get_user_id(username)
+        sql = text("""INSERT INTO stocks (name, dividend, user_id)
+                   VALUES (:name, :dividend, :user_id)""")
+        db.session.execute(sql, {"name":name, "dividend":dividend, "user_id":user_id})
         db.session.commit()
         return True
     return False
@@ -42,3 +45,10 @@ def add_account(name, owner):
         db.session.commit()
         return True
     return False
+
+def add_dividend(stock, dividend):
+    user_id = que.get_user_id(session["username"])
+    sql = text("""UPDATE stocks SET dividend=:dividend
+               WHERE name=:stock AND user_id=:user_id""")
+    db.session.execute(sql, {"dividend":dividend, "stock":stock, "user_id":user_id})
+    db.session.commit()

@@ -83,14 +83,27 @@ def accounts_from_db(username):
         accounts.append(account[0])
     return accounts
 
-def stocks_from_db():
-    sql = text("SELECT name FROM stocks")
-    stocktuples = db.session.execute(sql).fetchall()
+def stocks_from_db(username):
+    user_id = get_user_id(username)
+    sql = text("""SELECT name FROM stocks WHERE user_id=:user_id
+               ORDER BY name ASC""")
+    stocktuples = db.session.execute(sql, {"user_id":user_id}).fetchall()
     db.session.commit()
     stocks = []
     for stock in stocktuples:
         stocks.append(stock[0])
     return stocks
+
+def dividends_from_db(username):
+    user_id = get_user_id(username)
+    sql = text("""SELECT name, dividend FROM stocks WHERE user_id =:user_id
+               ORDER BY name ASC""")
+    result = db.session.execute(sql, {"user_id":user_id}).fetchall()
+    dividends = []
+    for row in result:
+        if row.dividend > 0:
+            dividends.append((row.name, row.dividend))
+    return dividends
 
 def stocks_available_for_sell(account_id, stock):
     sql = text("""SELECT SUM(number) - SUM(sold) as available

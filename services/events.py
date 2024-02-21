@@ -11,7 +11,6 @@ def add_event(event_type, owner_name, account_name,
         print("result, msg", result, error_msg)
         if not result:
             return (False, error_msg)
-        date = fix_date_format(date)
         sql = text("INSERT INTO sell_events (account_id, date, stock,\
                 number, price) VALUES (:account_id, :date, :stock, \
                 :number, :price)")
@@ -26,7 +25,6 @@ def add_event(event_type, owner_name, account_name,
         print("result, msg", result, error_msg)
         if not result:
             return (False, error_msg)
-        date = fix_date_format(date)
         sql = text("INSERT INTO buy_events (account_id, date, stock,\
                    number, price, sold) VALUES (:account_id, :date, :stock, \
                    :number, :price, :sold)")
@@ -63,8 +61,3 @@ def update_pairing_table(buy_id, sell_id, number):
            VALUES (:buy_id, :sell_id, :number)")
     db.session.execute(sql, {"buy_id":buy_id, "sell_id":sell_id, "number":number})
     db.session.commit()
-
-def fix_date_format(date:str):
-    parts = date.split(".")
-    return f"{parts[2]-parts[1]-parts[0]}"
-

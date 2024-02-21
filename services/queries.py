@@ -1,16 +1,18 @@
+'''A module for database queries'''
+
 from flaskapp.db import db
 from sqlalchemy import text
 
-def get_account_id(account_name, owner_name): #under construction?
+def get_account_id(account_name, owner_name):
     sql = text("""SELECT A.id FROM accounts A, owners O
                WHERE A.owner_id = O.id AND O.name =:owner_name
                AND A.name=:account_name""")
-    id = db.session.execute(sql, {"owner_name":owner_name,
+    acc_id = db.session.execute(sql, {"owner_name":owner_name,
                             "account_name":account_name}).fetchone()
     db.session.commit()
-    return id[0]
+    return acc_id[0]
 
-def get_full_buy_events(): 
+def get_full_buy_events():
     sqlb = text("""SELECT O.name, A.name, B.date, B.stock, B.number, B.price
                 FROM owners O, accounts A, buy_events B
                 WHERE O.id = A.owner_id AND B.account_id = A.id""")
@@ -18,8 +20,7 @@ def get_full_buy_events():
     db.session.commit()
     if not buy_events:
         return []
-    else:
-        return buy_events
+    return buy_events
 
 def get_buy_events(owner_name, account_name, stock):
     '''For showing the events for the user'''
@@ -29,7 +30,7 @@ def get_buy_events(owner_name, account_name, stock):
                 AND B.sold < B.number AND A.name = :account_name AND
                 O.name = :owner_name AND B.stock = :stock
                 ORDER BY B.date ASC""")
-    buy_events = db.session.execute(sql, {"account_name":account_name, 
+    buy_events = db.session.execute(sql, {"account_name":account_name,
                     "stock":stock, "owner_name":owner_name}).fetchall()
     db.session.commit()
     return buy_events
@@ -39,8 +40,7 @@ def check_user_exists(username):
     user = db.session.execute(sql, {"username":username}).fetchone()
     if not user:
         return False
-    else:
-        return True
+    return True
 
 def get_owner_id(name):
     sql = text("SELECT id FROM owners  WHERE name=:name")
@@ -83,7 +83,7 @@ def accounts_from_db(username):
         accounts.append(account[0])
     return accounts
 
-def stocks_from_db(): #todo, query with username, requires change to schema
+def stocks_from_db():
     sql = text("SELECT name FROM stocks")
     stocktuples = db.session.execute(sql).fetchall()
     db.session.commit()
@@ -92,24 +92,11 @@ def stocks_from_db(): #todo, query with username, requires change to schema
         stocks.append(stock[0])
     return stocks
 
-def owner_exists():
-    if len(owners_from_db()) == 0:
-        return False
-    return True
-
-def owner_stock_account_exists():
-    owners = owners_from_db()
-    stocks = stocks_from_db()
-    accounts = accounts_from_db()
-    if len(owners) == 0 or len(stocks) == 0 or len(accounts) == 0:
-        return False
-    return True
-
 def stocks_available_for_sell(account_id, stock):
     sql = text("""SELECT SUM(number) - SUM(sold) as available
                FROM buy_events
                WHERE account_id =:account_id AND stock =:stock""")
-    result = db.session.execute(sql, {"account_id":account_id, 
+    result = db.session.execute(sql, {"account_id":account_id,
                                       "stock":stock}).fetchone()
     if not result:
         return 0
@@ -178,8 +165,8 @@ def sell_events_by_year(selected_year, username):
         stock, number, buyprice = row.stock, row.number, row.buyprice
         selldate = f"{row.selldate.day}.{row.selldate.month}.{row.selldate.year}"
         sellprice = row.sellprice
-        string = f"{owner:20}{account:>20}: osto {buydate:15}{stock:20}{number:6}kpl á{buyprice:7}€,\
-                    myynti {selldate:15}á{sellprice:7}€"
+        string = f"{owner:20}{account:>20}: osto {buydate:15}{stock:20}{number:6}kpl\
+                 á{buyprice:7}€, myynti {selldate:15}á{sellprice:7}€"
         results_formatted.append(string)
     return results_formatted
 

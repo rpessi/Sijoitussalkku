@@ -1,4 +1,4 @@
-'''A module handling the web requests, posts and navigation'''
+'''A module for handling the web requests, posts and navigation'''
 import secrets
 from flask import redirect, render_template, request
 from flask import session, abort, flash
@@ -223,3 +223,12 @@ def dividends():
               tai osakkeille ei ole lisätty osingon määrää.")
         return redirect("/")
     return render_template("dividends.html", report=report)
+
+@app.route("/buy_events", methods=["GET"])
+def buy_events():
+    username = session["username"]
+    report = que.buy_event_report(username)
+    if not report:
+        flash("Myytävissä olevia osakkeita ei ole.")
+        return redirect("/")
+    return render_template("buy_events.html", report=report)

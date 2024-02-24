@@ -13,11 +13,37 @@ Valitse vuosi, jonka myyntitapahtumat haluat nähdä.<br>
 </form>
 <br>
 {% if selected_year is defined %}
-Vuoden {{selected_year}} myyntitapahtumat:
-<ul>
-    {% for event in events %}
-        <li>{{ event }}</li>
-    {% endfor %}
-</ul>
+<p>Vuoden {{selected_year}} myyntitapahtumat</p>
+<div class="table_component" role="region" tabindex="0">
+    <table>
+        <thead>
+            <tr>
+                <th>Omistaja</th>
+                <th>Tili</th>
+                <th>Ostopäivä</th>
+                <th>Osake</th>
+                <th>Kpl</th>
+                <th>Ostohinta yht. (€)</th>
+                <th>Myyntipäivä</th>
+                <th>Myyntihinta yht. (€)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for owner, account, buydate, stock, number, buytotal, selldate, selltotal in events %}
+            <tr>
+                <td>{{ owner }}</td>
+                <td>{{ account }}</td>
+                <td>{{ buydate }}</td>
+                <td>{{ stock }}</td>
+                <td>{{ number }}</td>
+                <td>{{ buytotal }}</td>
+                <td>{{ selldate }}</td>
+                <td>{{ selltotal }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+<div style="margin-top:8px"></div>
+</div>
 {% endif %}
 {% endblock content %}

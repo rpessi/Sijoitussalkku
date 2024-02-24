@@ -181,9 +181,8 @@ def sell_events_by_year(selected_year, username):
         stock, number, buytotal = row.stock, row.number, round(float(row.buytotal),2)
         selldate = f"{row.selldate.day}.{row.selldate.month}.{row.selldate.year}"
         selltotal = round(float(row.selltotal), 2)
-        string = f"{row.owner:20}{row.account:>20}: osto {buydate:15}{stock:20}{number:6}kpl\
-                 yht. {buytotal:8}€, myynti {selldate:15}yht. {selltotal:8}€"
-        results_formatted.append(string)
+        newrow = (row.owner, row.account, buydate, stock, number, buytotal, selldate, selltotal)
+        results_formatted.append(newrow)
     return results_formatted
 
 def holdings_report(username):
@@ -199,9 +198,9 @@ def holdings_report(username):
     results_formatted = []
     for row in results:
         owner, stock, number = row.owner, row.stock, row.number
-        avgprice = round(float(row.avgprice),2)
-        string = f"{owner:20} - {stock:>20}: {number:8}kpl, keskihinta {avgprice:8}€"
-        results_formatted.append(string)
+        avgprice = round(float(row.avgprice), 2)
+        newrow = (owner, stock, number, avgprice)
+        results_formatted.append(newrow)
     return results_formatted
 
 def dividend_report(username):
@@ -218,7 +217,27 @@ def dividend_report(username):
     results_formatted = []
     for row in results:
         owner, stock, number = row.owner, row.stock, row.number
-        dividends = round(float(row.dividends),2)
-        string = f"{owner:20} - {stock:>20}: {number:8}kpl, osingot {dividends:8}€"
-        results_formatted.append(string)
+        dividends = round(float(row.dividends), 2)
+        newrow = (owner, stock, number, dividends)
+        results_formatted.append(newrow)
+    return results_formatted
+
+def buy_event_report(username):
+    '''A function for reporting stocks available for sell'''
+    user_id = get_user_id(username)
+    sql = text("""SELECT O.name AS owner, B.stock, A.name AS account, B.date as buydate,
+               B.number-B.sold as number, B.price as buyprice
+               FROM users U JOIN owners O ON U.id = O.user_id
+               JOIN accounts A ON O.id = A.owner_ID
+               JOIN buy_events B on B.account_id = A.id
+               WHERE U.id =:user_id AND B.number-B.sold > 0
+               ORDER BY owner, B.stock, account, buydate ASC""")
+    results = db.session.execute(sql, {"user_id":user_id}).fetchall()
+    results_formatted = []
+    for row in results:
+        owner, stock, account = row.owner, row.stock, row.account
+        buydate = f"{row.buydate.day}.{row.buydate.month}.{row.buydate.year}"
+        buyprice = round(float(row.buyprice), 2)
+        newrow = (owner, stock, account, buydate, row.number, buyprice)
+        results_formatted.append(newrow)
     return results_formatted

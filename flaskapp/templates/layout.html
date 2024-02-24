@@ -28,6 +28,7 @@
         <a href="/add_dividend">Lisää osinko</a>
         <a href="/sell_events">Näytä myyntitapahtumat</a>
         <a href="/holdings">Näytä omistukset</a>
+        <a href="/dividends">Näytä osingot</a>
     </div>
     {% else %}
     <form action="/login" method="POST">
@@ -46,10 +47,10 @@
     {% endblock content %}
     <hr>
     <div class="button-group">
-    <a href="/">Etusivulle</a>
-    {% if session.username %}
-    <a href="/logout">Kirjaudu ulos</a>
-    {% endif %}
-    </div>
-</body>
-</html>
+        <a href="/">Etusivulle</a>
+        {% if session.username %}
+        <a href="/logout">Kirjaudu ulos</a>
+        {% endif %}
+        </div>
+    </body>
+    </html>

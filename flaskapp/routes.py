@@ -30,8 +30,6 @@ def login():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    if request.method == "GET":
-        return render_template("register.html")
     if request.method == "POST":
         if session["pre_token"] != request.form["pre_token"]:
             abort(403)
@@ -51,6 +49,7 @@ def register():
         setup.add_user(username, password)
         flash("Käyttäjätunnus on luotu, voit nyt kirjautua sisään.")
         return redirect("/")
+    return render_template("register.html")
 
 @app.route("/logout")
 def logout():
@@ -75,10 +74,7 @@ def addowner():
             return redirect("/addowner")
         flash("Omistaja on jo lisätty.")
         return redirect("/addowner")
-    if request.method == "GET":
-        #if owners == []:
-        #    render_template("addowner.html")
-        return render_template("addowner.html", owners=owners)
+    return render_template("addowner.html", owners=owners)
 
 @app.route("/addstock", methods=["GET", "POST"])
 def addstock():
@@ -100,13 +96,7 @@ def addstock():
 @app.route("/add_dividend", methods=["GET", "POST"])
 def add_dividend():
     stocks = que.stocks_from_db(session["username"])
-    if not stocks:
-        flash("Lisää ensin osake.")
-        return redirect("/addstock")
-    dividends = que.dividends_from_db(session["username"])
-    if request.method == "GET":
-        return render_template("add_dividend.html", stocks=stocks,
-                            dividends=dividends)
+    db_dividends = que.dividends_from_db(session["username"])
     if request.method == "POST":
         if session["csrf_token"] != request.form["csrf_token"]:
             abort(403)
@@ -121,17 +111,16 @@ def add_dividend():
             return redirect("/add_dividend")
         setup.add_dividend(stock, dividend)
         return redirect ("/add_dividend")
+    if not stocks:
+        flash("Lisää ensin osake.")
+        return redirect("/addstock")
+    return render_template("add_dividend.html", stocks=stocks,
+                            dividends=db_dividends)
 
 @app.route("/addaccount", methods=["GET", "POST"])
 def addaccount():
     owners = que.owners_from_db(session["username"])
     pairs = que.get_owner_account_pairs(session["username"])
-    if request.method == "GET":
-        if not owners:
-            flash("Lisää ensin omistaja.")
-            return redirect("/addowner")
-        return render_template("addaccount.html", owners=owners,
-                               pairs=pairs)
     if request.method == "POST":
         if session["csrf_token"] != request.form["csrf_token"]:
             abort(403)
@@ -147,6 +136,11 @@ def addaccount():
             return redirect("/addaccount")
         flash("Tilin lisäys ei onnistunut")
         return redirect("/addaccount")
+    if not owners:
+        flash("Lisää ensin omistaja.")
+        return redirect("/addowner")
+    return render_template("addaccount.html", owners=owners,
+                               pairs=pairs)
 
 @app.route("/addevent", methods=["GET"])
 def addevent():
@@ -197,11 +191,6 @@ def event():
 def sell_events():
     username = session["username"]
     years = que.get_years_with_sell_events(username)
-    if request.method =="GET":
-        if not years:
-            flash("Myyntitapahtumia ei ole.")
-            return redirect("/")
-        return render_template("sell_events.html", years=years)
     if request.method == "POST":
         if session["csrf_token"] != request.form["csrf_token"]:
             abort(403)
@@ -209,16 +198,29 @@ def sell_events():
             flash("Valitse vuosi.")
             return redirect("/sell_events")
         selected_year = request.form["year"]
-        sell_events = que.sell_events_by_year(selected_year, username)
+        s_events = que.sell_events_by_year(selected_year, username)
         return render_template("sell_events.html", years=years,
-            selected_year=selected_year, events=sell_events)
+            selected_year=selected_year, events=s_events)
+    if not years:
+        flash("Myyntitapahtumia ei ole.")
+        return redirect("/")
+    return render_template("sell_events.html", years=years)
 
 @app.route("/holdings", methods=["GET"])
 def holdings():
     username = session["username"]
-    if request.method == "GET":
-        report = que.holdings_report(username)
-        if not report:
-            flash("Lisäämilläsi omistajilla ei ole omistuksia.")
-            return redirect("/")
-        return render_template("holdings.html", report=report)
+    report = que.holdings_report(username)
+    if not report:
+        flash("Lisäämilläsi omistajilla ei ole omistuksia.")
+        return redirect("/")
+    return render_template("holdings.html", report=report)
+
+@app.route("/dividends", methods=["GET"])
+def dividends():
+    username = session["username"]
+    report = que.dividend_report(username)
+    if not report:
+        flash("Lisäämilläsi omistajilla ei ole osinkoja\
+              tai osakkeille ei ole lisätty osingon määrää.")
+        return redirect("/")
+    return render_template("dividends.html", report=report)

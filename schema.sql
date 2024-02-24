@@ -22,10 +22,11 @@ CREATE TABLE accounts (
 );
 
 CREATE TABLE stocks (
+    id SERIAL,
     name VARCHAR(30),
     dividend DECIMAL,
     user_id INTEGER,
-    PRIMARY KEY (name),
+    PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES users (id)
 );
 

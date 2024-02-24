@@ -164,7 +164,8 @@ def get_years_with_sell_events(username):
 def sell_events_by_year(selected_year, username):
     user_id = get_user_id(username)
     sql = text("""SELECT O.name as owner, A.name as account, B.date as buydate, B.stock,
-                P.number, B.price as buyprice, S.date as selldate, S.price as sellprice
+                P.number, P.number*B.price as buytotal, S.date as selldate,
+                P.number*S.price as selltotal
                 FROM owners O, accounts A, buy_events B, sell_events S, users U, pairing P
                 WHERE O.user_id = U.id AND A.owner_id = O.id AND S.account_id = A.id
                 AND P.sell_id = S.id AND P.buy_id = B.id
@@ -173,27 +174,48 @@ def sell_events_by_year(selected_year, username):
     results = db.session.execute(sql, {"selected_year":selected_year, "user_id":user_id}).fetchall()
     results_formatted = []
     for row in results:
-        owner, account = row.owner, row.account
         buydate = f"{row.buydate.day}.{row.buydate.month}.{row.buydate.year}"
-        stock, number, buyprice = row.stock, row.number, row.buyprice
+        stock, number, buytotal = row.stock, row.number, round(float(row.buytotal),2)
         selldate = f"{row.selldate.day}.{row.selldate.month}.{row.selldate.year}"
-        sellprice = row.sellprice
-        string = f"{owner:20}{account:>20}: osto {buydate:15}{stock:20}{number:6}kpl\
-                 á{buyprice:7}€, myynti {selldate:15}á{sellprice:7}€"
+        selltotal = round(float(row.selltotal), 2)
+        string = f"{row.owner:20}{row.account:>20}: osto {buydate:15}{stock:20}{number:6}kpl\
+                 yht. {buytotal:8}€, myynti {selldate:15}yht. {selltotal:8}€"
         results_formatted.append(string)
     return results_formatted
 
 def holdings_report(username):
-    sql = text("""SELECT O.name as owner, B.stock, SUM(B.number)-SUM(B.sold) as number
-               FROM accounts A, owners O, buy_events B, users U
-               WHERE B.account_id = A.id AND A.owner_id = O.id
-               AND U.id = O.user_id AND U.username =:username
+    sql = text("""SELECT O.name as owner, B.stock, SUM(B.number-B.sold) as number,
+               (SUM((B.number-B.sold)*B.price)/SUM(B.number-B.sold)) AS avgprice
+               FROM users U JOIN owners O on U.id = O.user_id
+               JOIN accounts A ON A.owner_id = O.id
+               JOIN buy_events B ON B.account_id = A.id
+               WHERE U.username =:username
                GROUP BY owner, B.stock ORDER BY owner, B.stock ASC""")
     results = db.session.execute(sql, {"username":username}).fetchall()
     results_formatted = []
     for row in results:
         owner, stock, number = row.owner, row.stock, row.number
+        avgprice = round(float(row.avgprice),2)
         if number > 0:
-            string = f"{owner:20} - {stock:>20}: {number:8}kpl"
+            string = f"{owner:20} - {stock:>20}: {number:8}kpl, keskihinta {avgprice:8}€"
+            results_formatted.append(string)
+    return results_formatted
+
+def dividend_report(username):
+    sql = text("""SELECT O.name AS owner, B.stock, SUM(B.number-B.sold) AS number,
+               (SUM(number*S.dividend)) AS dividends
+               FROM users U JOIN owners O ON U.id = O.user_id
+               JOIN accounts A ON A.owner_id = O.id
+               JOIN buy_events B ON B.account_id = A.id
+               JOIN stocks S ON B.stock = S.name
+               WHERE U.username =:username
+               GROUP BY owner, B.stock ORDER BY owner, B.stock ASC""")
+    results = db.session.execute(sql, {"username":username}).fetchall()
+    results_formatted = []
+    for row in results:
+        owner, stock, number = row.owner, row.stock, row.number
+        dividends = round(float(row.dividends),2)
+        if number > 0:
+            string = f"{owner:20} - {stock:>20}: {number:8}kpl, osingot {dividends:8}€"
             results_formatted.append(string)
     return results_formatted

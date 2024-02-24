@@ -168,8 +168,7 @@ def event():
     event_type = request.form["event_type"]
     pair = request.form["pair"]
     pair = pair.split("+")
-    owner = pair[0]
-    account = pair[1]
+    owner, account = pair[0], pair[1]
     date = request.form["date"]
     stock = request.form["stock"]
     number = request.form["number"]

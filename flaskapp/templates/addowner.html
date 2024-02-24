@@ -3,9 +3,9 @@
 {% block content %}
     <form action="#" method="POST">
         Omistajan nimi: <br>
-        <textarea name="owner" rows="1" cols="20"></textarea>
+        <textarea name="owner" rows="1" cols="20" maxlength="30" required></textarea>
         <p>
-        <input type="submit" value="Lisää omistaja" required>
+        <input type="submit" value="Lisää omistaja">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
     {% if owners %}

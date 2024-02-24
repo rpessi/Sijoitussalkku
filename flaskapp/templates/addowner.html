@@ -1,19 +1,17 @@
-{% extends "layout.html"%}
-{% block title %}Lisää omistaja{% endblock %}
-{% block content %}
-    <form action="#" method="POST">
-        Omistajan nimi: <br>
-        <textarea name="owner" rows="1" cols="20" maxlength="30" required></textarea>
-        <p>
-        <input type="submit" value="Lisää omistaja">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    </form>
-    {% if owners %}
-    Lisätyt omistajat:
-    <ul>
-        {% for owner in owners %}
-            <li>{{ owner }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-{% endblock content %}
+{% extends "layout.html"%} {% block title %}Lisää omistaja{% endblock %} {% block content %}
+<form action="#" method="POST">
+    Omistajan nimi: <br />
+    <textarea name="owner" rows="1" cols="20" maxlength="30" required></textarea>
+    <p>
+        <input type="submit" value="Lisää omistaja" />
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    </p>
+</form>
+
+{% if owners %} Lisätyt omistajat:
+<ul>
+    {% for owner in owners %}
+    <li>{{ owner }}</li>
+    {% endfor %}
+</ul>
+{% endif %} {% endblock content %}

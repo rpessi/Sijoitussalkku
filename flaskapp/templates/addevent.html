@@ -1,38 +1,45 @@
-{% extends "layout.html"%}
-{% block title %}Lisää tapahtuma{% endblock %}
-{% block content %}
-    <p>
-    Lisää osto- tai myyntitapahtuma. <br>
-    </p>
-    <form action="/event" method="POST">
+{% extends "layout.html"%} {% block title %}Lisää tapahtuma{% endblock %} {% block content %}
+<p>Lisää osto- tai myyntitapahtuma. <br /></p>
+<form action="/event" method="POST">
     Valitse tapahtuman tyyppi:
+    <p><input type="radio" name="event_type" value="buy" /> Osto <input type="radio" name="event_type" value="sell" /> Myynti</p>
+
+    <p>Valitse tapahtuman omistaja ja arvo-osuustili: <br /></p>
+
     <p>
-    <input type="radio" name="event_type" value="buy"> Osto
-    <input type="radio" name="event_type" value="sell"> Myynti
+        {% for owner, account in pairs %}
+        <input type="radio" name="pair" value="{{owner}}+{{account}}" /> {{owner}}: {{account}} {% endfor %}
+    </p>
+
     <p>
-    Valitse tapahtuman omistaja ja arvo-osuustili: <br>
+        Tapahtuman päivämäärä: <br />
+        <textarea name="date" rows="1" cols="20" required></textarea>
+        <br />
+    </p>
+
     <p>
-    {% for owner, account in pairs %}
-    <input type="radio" name="pair" value="{{owner}}+{{account}}" > {{owner}}: {{account}}
-    {% endfor %}
+        Valitse osake:
+    </p>
+
     <p>
-    Tapahtuman päivämäärä: <br>
-    <textarea name="date" rows="1" cols="20" required></textarea>
-    <br>
+        {% for stock in stocks %}
+        <input type="radio" name="stock" value="{{stock}}" /> {{stock}} {% endfor %}
+    </p>
+
     <p>
-    Valitse osake:
+        Kappalemäärä: <br />
+        <textarea name="number" rows="1" cols="20" required></textarea>
+    </p>
+
     <p>
-    {% for stock in stocks %}
-    <input type="radio" name="stock" value="{{stock}}" > {{stock}}
-    {% endfor %}
+        Kappalehinta: <br />
+        <textarea name="price" rows="1" cols="20" required></textarea>
+    </p>
+
     <p>
-    Kappalemäärä: <br>
-    <textarea name="number" rows="1" cols="20" required></textarea>
-    <p>
-    Kappalehinta: <br>
-    <textarea name="price" rows="1" cols="20" required></textarea>
-    <p>
-    <input type="submit" value="Lisää tapahtuma">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    </form>
+        <input type="submit" value="Lisää tapahtuma" />
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    </p>
+</form>
+
 {% endblock content %}

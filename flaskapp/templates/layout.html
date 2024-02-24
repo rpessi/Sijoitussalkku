@@ -1,57 +1,60 @@
-<!doctype html>
-<link rel="stylesheet" href="/static/main.css">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<!DOCTYPE html>
+<link rel="stylesheet" href="/static/main.css" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <html>
-<head>
-    {% block head %}
-    <title>Sijoitussalkku - {% block title%}Sijoitussalkku{% endblock title %}</title>
-    {% endblock head%}
-</head>
-<body>
-    <h1>Sijoitus$alkku</h1>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul class=flashes>
-        {% for message in messages %}
+    <head>
+        {% block head %}
+        <title>Sijoitussalkku - {% block title%}Sijoitussalkku{% endblock title %}</title>
+        {% endblock head%}
+    </head>
+    <body>
+        <h1>Sijoitus$alkku</h1>
+        {% with messages = get_flashed_messages() %} {% if messages %}
+        <ul class="flashes">
+            {% for message in messages %}
             <li>{{ message }}</li>
-        {% endfor %}
+            {% endfor %}
         </ul>
+        {% endif %} {% endwith %} {% if session.username %}
+        <p>Olet kirjautunut nimellä {{ session.username }}</p>
+        <div class="button-group">
+            <a href="/addowner">Lisää omistaja</a>
+            <a href="/addaccount">Lisää arvo-osuustili</a>
+            <a href="/addstock">Lisää osake</a>
+            <a href="/addevent">Lisää tapahtuma</a>
+            <a href="/add_dividend">Lisää osinko</a>
+            <a href="/sell_events">Näytä myyntitapahtumat</a>
+            <a href="/holdings">Näytä omistukset</a>
+            <a href="/dividends">Näytä osingot</a>
+            <a href="/buy_events">Näytä ostoerät</a>
+        </div>
+        {% else %}
+        <form action="/login" method="POST">
+            <p>
+                Käyttäjätunnus:<br />
+                <input type="text" name="username" />
+            </p>
+
+            <p>
+                Salasana:<br />
+                <input type="password" name="password" />
+            </p>
+
+            <input type="submit" value="Kirjaudu" />
+            <input type="hidden" name="pre_token" value="{{ session.pre_token }}" />
+            <p></p>
+        </form>
+
+        <a href="/register">Luo tunnus</a>
         {% endif %}
-    {% endwith %}
-    {% if session.username %}
-    <p> Olet kirjautunut nimellä {{ session.username }}</p>
-    <div class="button-group">
-        <a href="/addowner">Lisää omistaja</a>
-        <a href="/addaccount">Lisää arvo-osuustili</a>
-        <a href="/addstock">Lisää osake</a>
-        <a href="/addevent">Lisää tapahtuma</a>
-        <a href="/add_dividend">Lisää osinko</a>
-        <a href="/sell_events">Näytä myyntitapahtumat</a>
-        <a href="/holdings">Näytä omistukset</a>
-        <a href="/dividends">Näytä osingot</a>
-        <a href="/buy_events">Näytä ostoerät</a>
-    </div>
-    {% else %}
-    <form action="/login" method="POST">
-    <p>Käyttäjätunnus:</br>
-    <input type="text" name="username"></p>
-    <p>Salasana:<br>
-    <input type="password" name="password"></p>
-    <input type="submit" value="Kirjaudu">
-    <input type="hidden" name="pre_token" value="{{ session.pre_token }}">
-    <p>
-    </form>
-    <a href="/register">Luo tunnus</a>
-    {% endif %}
-    <hr>
-    {% block content %}
-    {% endblock content %}
-    <hr>
-    <div class="button-group">
-        <a href="/">Etusivulle</a>
-        {% if session.username %}
-        <a href="/logout">Kirjaudu ulos</a>
-        {% endif %}
+        <hr />
+        {% block content %} {% endblock content %}
+        <hr />
+        <div class="button-group">
+            <a href="/">Etusivulle</a>
+            {% if session.username %}
+            <a href="/logout">Kirjaudu ulos</a>
+            {% endif %}
         </div>
     </body>
-    </html>
+</html>

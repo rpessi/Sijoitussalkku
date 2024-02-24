@@ -1,33 +1,30 @@
-{% extends "layout.html"%}
-{% block title %}Näytä ostoerät{% endblock %}
-{% block content %}
-<p>Omistajien hallussa olevat, myytävissä olevat osakkeet ostoerittäin.
-</p>
+{% extends "layout.html"%} {% block title %}Näytä ostoerät{% endblock %} {% block content %}
+<p>Omistajien hallussa olevat, myytävissä olevat osakkeet ostoerittäin.</p>
 <div class="table_component" role="region" tabindex="0">
-<table>
-    <thead>
-        <tr>
-            <th>Omistaja</th>
-            <th>Osake</th>
-            <th>Tili</th>
-            <th>Ostopäivä</th>
-            <th>Kpl</th>
-            <th>Ostohinta/kpl (€)</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for owner, stock, account, date, number, price in report %}
-        <tr>
-            <td>{{ owner }}</td>
-            <td>{{ stock }}</td>
-            <td>{{ account }}</td>
-            <td>{{ date }}</td>
-            <td>{{ number }}</td>
-            <td>{{ price }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<div style="margin-top:8px"></div>
+    <table>
+        <thead>
+            <tr>
+                <th>Omistaja</th>
+                <th>Osake</th>
+                <th>Tili</th>
+                <th>Ostopäivä</th>
+                <th>Kpl</th>
+                <th>Ostohinta/kpl (€)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for owner, stock, account, date, number, price in report %}
+            <tr>
+                <td>{{ owner }}</td>
+                <td>{{ stock }}</td>
+                <td>{{ account }}</td>
+                <td>{{ date }}</td>
+                <td>{{ number }}</td>
+                <td>{{ price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div style="margin-top: 8px;"></div>
 </div>
 {% endblock content %}

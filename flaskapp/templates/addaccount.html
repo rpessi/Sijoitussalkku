@@ -1,31 +1,29 @@
-{% extends "layout.html"%}
-{% block title %}Lisää tapahtuma{% endblock %}
-{% block content %}
+{% extends "layout.html"%} {% block title %}Lisää tapahtuma{% endblock %} {% block content %}
+<p>Lisää omistajalle arvo-osuustili. <br /></p>
+<form action="#" method="POST">
     <p>
-    Lisää omistajalle arvo-osuustili. <br>
-    </p>
-    <form action="#" method="POST">
-    <p>
-    Valitse omistaja:
+        Valitse omistaja:
     </p>
     <ul>
-    {% for owner in owners %}
-    <input type="radio" name="owner" value="{{owner}}" > {{owner}}
-    {% endfor %}
+        {% for owner in owners %}
+        <input type="radio" name="owner" value="{{owner}}" />
+        {{owner}} {% endfor %}
     </ul>
-    Nimeä arvo-osuustili:<br>
+    Nimeä arvo-osuustili:<br />
     <textarea name="account" rows="1" cols="20" required></textarea>
     <p>
-    <input type="submit" value="Lisää arvo-osuustili">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    </form>
-    <p>
-    {% if pairs %}
-    Lisätyt tilit: 
-        <ul>
-        {% for pair in pairs %}
-            <li>{{pair[0]}}: {{pair[1]}}</li>
-        {% endfor %}
-        </ul>
-    {% endif %}
-{% endblock content %}
+        <input type="submit" value="Lisää arvo-osuustili" />
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    </p>
+</form>
+
+<p>
+    {% if pairs %} Lisätyt tilit:
+</p>
+
+<ul>
+    {% for pair in pairs %}
+    <li>{{pair[0]}}: {{pair[1]}}</li>
+    {% endfor %}
+</ul>
+{% endif %} {% endblock content %}

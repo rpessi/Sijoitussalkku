@@ -1,30 +1,26 @@
-{% extends "layout.html"%}
-{% block title %}Näytä osingot{% endblock %}
-{% block content %}
-<p>Osinkoennuste omistajien hallussa oleville osakkeille. Ennuste olettaa,
-    että hallussa olevien osakkeiden määrä ei muutu ennen osingon irtoamispäivää. 
-</p>
+{% extends "layout.html"%} {% block title %}Näytä osingot{% endblock %} {% block content %}
+<p>Osinkoennuste omistajien hallussa oleville osakkeille. Ennuste olettaa, että hallussa olevien osakkeiden määrä ei muutu ennen osingon irtoamispäivää.</p>
 <div class="table_component" role="region" tabindex="0">
-<table>
-    <thead>
-        <tr>
-            <th>Omistaja</th>
-            <th>Osake</th>
-            <th>Kpl</th>
-            <th>Osingot yht (€)</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for owner, stock, number, dividends in report %}
-        <tr>
-            <td>{{ owner }}</td>
-            <td>{{ stock }}</td>
-            <td>{{ number }}</td>
-            <td>{{ dividends }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<div style="margin-top:8px"></div>
+    <table>
+        <thead>
+            <tr>
+                <th>Omistaja</th>
+                <th>Osake</th>
+                <th>Kpl</th>
+                <th>Osingot yht (€)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for owner, stock, number, dividends in report %}
+            <tr>
+                <td>{{ owner }}</td>
+                <td>{{ stock }}</td>
+                <td>{{ number }}</td>
+                <td>{{ dividends }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div style="margin-top: 8px;"></div>
 </div>
 {% endblock content %}

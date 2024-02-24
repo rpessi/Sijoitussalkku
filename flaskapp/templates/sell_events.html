@@ -1,17 +1,12 @@
-{% extends "layout.html"%}
-{% block title %}Näytä myyntitapahtumat{% endblock %}
-{% block content %}
-<p>
-Valitse vuosi, jonka myyntitapahtumat haluat nähdä.<br>
-</p>
+{% extends "layout.html"%} {% block title %}Näytä myyntitapahtumat{% endblock %} {% block content %}
+<p>Valitse vuosi, jonka myyntitapahtumat haluat nähdä.<br /></p>
 <form action="#" method="POST">
-{% for year in years %}
-<input type="radio" name="year" value="{{year}}" > {{year}}
-{% endfor %}
-<input type="submit" value="Hae tapahtumat">
-<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    {% for year in years %}
+    <input type="radio" name="year" value="{{year}}" /> {{year}} {% endfor %}
+    <input type="submit" value="Hae tapahtumat" />
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
 </form>
-<br>
+<br />
 {% if selected_year is defined %}
 <p>Vuoden {{selected_year}} myyntitapahtumat</p>
 <div class="table_component" role="region" tabindex="0">
@@ -43,7 +38,6 @@ Valitse vuosi, jonka myyntitapahtumat haluat nähdä.<br>
             {% endfor %}
         </tbody>
     </table>
-<div style="margin-top:8px"></div>
+    <div style="margin-top: 8px;"></div>
 </div>
-{% endif %}
-{% endblock content %}
+{% endif %} {% endblock content %}

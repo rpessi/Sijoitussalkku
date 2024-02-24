@@ -25,7 +25,10 @@
         <a href="/addaccount">Lisää arvo-osuustili</a>
         <a href="/addstock">Lisää osake</a>
         <a href="/addevent">Lisää tapahtuma</a>
+        <a href="/add_dividend">Lisää osinko</a>
         <a href="/sell_events">Näytä myyntitapahtumat</a>
+        <a href="/holdings">Näytä omistukset</a>
+        <a href="/dividends">Näytä osingot</a>
     </div>
     {% else %}
     <form action="/login" method="POST">
@@ -34,18 +37,20 @@
     <p>Salasana:<br>
     <input type="password" name="password"></p>
     <input type="submit" value="Kirjaudu">
+    <input type="hidden" name="pre_token" value="{{ session.pre_token }}">
     <p>
     </form>
     <a href="/register">Luo tunnus</a>
     {% endif %}
     <hr>
-    {% block content %}{% endblock content %}
+    {% block content %}
+    {% endblock content %}
     <hr>
     <div class="button-group">
-    <a href="/">Etusivulle</a>
-    {% if session.username %}
-    <a href="/logout">Kirjaudu ulos</a>
-    {% endif %}
-    </div>
-</body>
-</html>
+        <a href="/">Etusivulle</a>
+        {% if session.username %}
+        <a href="/logout">Kirjaudu ulos</a>
+        {% endif %}
+        </div>
+    </body>
+    </html>

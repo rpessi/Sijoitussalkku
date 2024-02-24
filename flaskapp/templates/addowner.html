@@ -5,10 +5,10 @@
         Omistajan nimi: <br>
         <textarea name="owner" rows="1" cols="20"></textarea>
         <p>
-        <input type="submit" value="Lisää omistaja">
+        <input type="submit" value="Lisää omistaja" required>
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
-    {% if owners is defined %}
+    {% if owners %}
     Lisätyt omistajat:
     <ul>
         {% for owner in owners %}

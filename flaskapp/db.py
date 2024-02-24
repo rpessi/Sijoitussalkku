@@ -1,5 +1,5 @@
+'''A module for setting up the database'''
 from os import getenv
-import psycopg2
 from flask_sqlalchemy import SQLAlchemy
 from flaskapp.app import app
 

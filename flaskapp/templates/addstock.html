@@ -1,15 +1,15 @@
 {% extends "layout.html"%}
-{% block title %}Lisää tapahtuma{% endblock %}
+{% block title %}Lisää osake{% endblock %}
 {% block content %}
     <form action="#" method="POST">
         Osakkeen nimi: <br>
-        <textarea name="stock" rows="1" cols="20"></textarea>
+        <textarea name="stock" rows="1" cols="20" required></textarea>
         <p>
         <input type="submit" value="Lisää osake">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
     <br>
-    {% if stocks is defined %}
+    {% if stocks %}
     Lisätyt osakkeet:
     <ul>
         {% for stock in stocks %}

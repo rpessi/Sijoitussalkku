@@ -1,12 +1,41 @@
-{% extends "layout.html"%}
+<!doctype html>
+<link rel="stylesheet" href="/static/main.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<html>
+<head>
+    {% block head %}
+    <title>Sijoitussalkku - {% block title%}Sijoitussalkku{% endblock title %}</title>
+    {% endblock head%}
+</head>
+<body>
+    <h1>Sijoitus$alkku</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class=flashes>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
 {% block content %}
 <form action="/register" method="POST">
 <p>Käyttäjätunnus:</br>
-<input type="text" name="username"></p>
+<input type="text" name="username" required></p>
 <p>Salasana:<br>
-<input type="password" name="password">
+<input type="password" name="password" required>
 <p>Salasana uudelleen:<br>
-<input type="password" name="pwd_check"></p>
+<input type="password" name="pwd_check" required></p>
 <input type="submit" value="Luo tunnus">
+<input type="hidden" name="pre_token" value="{{ session.pre_token }}">
 </form>
 {% endblock content %}
+<hr>
+<div class="button-group">
+    <a href="/">Etusivulle</a>
+    {% if session.username %}
+    <a href="/logout">Kirjaudu ulos</a>
+    {% endif %}
+    </div>
+</body>
+</html>

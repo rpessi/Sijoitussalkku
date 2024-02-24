@@ -1,38 +1,38 @@
 '''A module handling the web requests, posts and navigation'''
 import secrets
-from flaskapp.app import app
-from flaskapp.db import db
 from flask import redirect, render_template, request
 from flask import session, abort, flash
-from services import events, setup as set, queries as que
+from services import events, setup, queries as que
 from services import validate as val
+from flaskapp.app import app
 
 @app.route("/")
 def index():
+    session["pre_token"] = secrets.token_hex(16)
     return render_template("index.html")
 
 @app.route("/login", methods=["POST"])
 def login():
+    if session["pre_token"] != request.form["pre_token"]:
+        abort(403)
     selection = ["username", "password"]
     if not val.check_selection(selection):
         flash("Täytä molemmat kentät.")
         return redirect("/")
     username = request.form["username"]
     password = request.form["password"]
-    #todo: validate.user(username, password)
     if val.validate_login(username, password):
         session["username"] = username
         session["csrf_token"] = secrets.token_hex(16)
         return redirect("/")
-    else:
-        flash("Käyttäjätunnus ja salasana eivät täsmää.")
-        return redirect("/")
+    flash("Käyttäjätunnus ja salasana eivät täsmää.")
+    return redirect("/")
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    if request.method == "GET":
-        return render_template("register.html")
     if request.method == "POST":
+        if session["pre_token"] != request.form["pre_token"]:
+            abort(403)
         selection = ["username", "password", "pwd_check"]
         if not val.check_selection(selection):
             flash("Täytä kaikki kentät.")
@@ -43,18 +43,19 @@ def register():
         if que.check_user_exists(username):
             flash("Käyttäjätunnus on varattu, valitse uusi.")
             return redirect("/register")
-        elif password != pwd_check:
+        if password != pwd_check:
             flash("Virhe salasanan uudelleenkirjoituksessa.")
             return redirect("/register")
-        else: 
-            set.add_user(username, password)
-            flash("Käyttäjätunnus on luotu, voit nyt kirjautua sisään.")
-            return redirect("/")
+        setup.add_user(username, password)
+        flash("Käyttäjätunnus on luotu, voit nyt kirjautua sisään.")
+        return redirect("/")
+    return render_template("register.html")
 
 @app.route("/logout")
 def logout():
     del session["username"]
     del session["csrf_token"]
+    del session["pre_token"]
     flash("Olet kirjautunut ulos.")
     return redirect("/")
 
@@ -63,24 +64,21 @@ def addowner():
     owners = que.owners_from_db(session["username"])
     if request.method == "POST":
         if session["csrf_token"] != request.form["csrf_token"]:
-            flash("Tokenisssa ongelmaa")
             abort(403)
         if not request.form.get("owner"):
             flash("Täytä kenttä.")
             return redirect("/addowner")
         owner = request.form["owner"]
-        result = set.add_owner(owner)
-        if result == True:
+        result = setup.add_owner(owner)
+        if result:
             return redirect("/addowner")
-        else:
-            flash("Omistaja on jo lisätty.")
-            return redirect("/addowner")
-    else:
-        return render_template("addowner.html", owners=owners)
+        flash("Omistaja on jo lisätty.")
+        return redirect("/addowner")
+    return render_template("addowner.html", owners=owners)
 
 @app.route("/addstock", methods=["GET", "POST"])
 def addstock():
-    stocks = que.stocks_from_db()
+    stocks = que.stocks_from_db(session["username"])
     if request.method == "POST":
         if session["csrf_token"] != request.form["csrf_token"]:
             abort(403)
@@ -88,14 +86,36 @@ def addstock():
             flash("Täytä kenttä.")
             return redirect("/addstock")
         stock = request.form["stock"]
-        result = set.add_stock(stock)
-        if result == True: #success
+        result = setup.add_stock(stock)
+        if result:
             return redirect("/addstock")
-        else:
-            flash("Osake on jo lisätty.")
-            return redirect("/addstock")
-    else:
-        return render_template("addstock.html", stocks=stocks)
+        flash("Osake on jo lisätty.")
+        return redirect("/addstock")
+    return render_template("addstock.html", stocks=stocks)
+
+@app.route("/add_dividend", methods=["GET", "POST"])
+def add_dividend():
+    stocks = que.stocks_from_db(session["username"])
+    db_dividends = que.dividends_from_db(session["username"])
+    if request.method == "POST":
+        if session["csrf_token"] != request.form["csrf_token"]:
+            abort(403)
+        selection = ["stock", "dividend"]
+        if not val.check_selection(selection):
+            flash("Valitse osake ja täytä kenttä.")
+            return redirect("/add_dividend")
+        stock = request.form["stock"]
+        dividend = request.form["dividend"].replace(",", ".")
+        if not val.stock_price_input(dividend):
+            flash("Anna osinko numeroina.")
+            return redirect("/add_dividend")
+        setup.add_dividend(stock, dividend)
+        return redirect ("/add_dividend")
+    if not stocks:
+        flash("Lisää ensin osake.")
+        return redirect("/addstock")
+    return render_template("add_dividend.html", stocks=stocks,
+                            dividends=db_dividends)
 
 @app.route("/addaccount", methods=["GET", "POST"])
 def addaccount():
@@ -110,23 +130,29 @@ def addaccount():
             return redirect("/addaccount")
         owner = request.form["owner"]
         account = request.form["account"]
-        result = set.add_account(account, owner)
-        if result == True:
+        result = setup.add_account(account, owner)
+        if result:
             flash("Tilin lisäys onnistui")
             return redirect("/addaccount")
-        else:
-            #todo, error
-            flash("Tilin lisäys ei onnistunut")
-            return redirect("/addaccount")
-    else:
-        return render_template("addaccount.html", owners=owners,
+        flash("Tilin lisäys ei onnistunut")
+        return redirect("/addaccount")
+    if not owners:
+        flash("Lisää ensin omistaja.")
+        return redirect("/addowner")
+    return render_template("addaccount.html", owners=owners,
                                pairs=pairs)
 
 @app.route("/addevent", methods=["GET"])
 def addevent():
     username = session["username"]
     pairs = que.get_owner_account_pairs(username)
-    stocks = que.stocks_from_db()
+    stocks = que.stocks_from_db(username)
+    if not pairs:
+        flash("Lisää ensin arvo-osuustili.")
+        return redirect("/addaccount")
+    if not stocks:
+        flash("Lisää ensin osake.")
+        return redirect("/addstock")
     return render_template("addevent.html", stocks=stocks,
                            pairs=pairs)
 
@@ -149,28 +175,22 @@ def event():
     number = request.form["number"]
     price = request.form["price"].replace(",", ".")
     if event_type == "buy":
-        type = "osto"
+        type_fin = "osto"
     else:
-        type = "myynti"
+        type_fin = "myynti"
     result, msg = events.add_event(event_type, owner, account, date, stock,
                      number, price)
     if result:
-        return render_template("event.html", event_type=type,
+        return render_template("event.html", event_type=type_fin,
             owner=owner, account=account, date=date, stock=stock,
             number=number, price=price)
-    else:
-        flash(msg)
-        return redirect("/addevent")
+    flash(msg)
+    return redirect("/addevent")
 
 @app.route("/sell_events", methods=["GET", "POST"])
 def sell_events():
     username = session["username"]
     years = que.get_years_with_sell_events(username)
-    if request.method =="GET":
-        if years == []:
-            flash("Myyntitapahtumia ei ole.")
-            return redirect("/")
-        return render_template("sell_events.html", years=years)
     if request.method == "POST":
         if session["csrf_token"] != request.form["csrf_token"]:
             abort(403)
@@ -178,16 +198,29 @@ def sell_events():
             flash("Valitse vuosi.")
             return redirect("/sell_events")
         selected_year = request.form["year"]
-        sell_events = que.sell_events_by_year(selected_year, username)
+        s_events = que.sell_events_by_year(selected_year, username)
         return render_template("sell_events.html", years=years,
-            selected_year=selected_year, events=sell_events)
+            selected_year=selected_year, events=s_events)
+    if not years:
+        flash("Myyntitapahtumia ei ole.")
+        return redirect("/")
+    return render_template("sell_events.html", years=years)
 
-@app.route("/holdings", methods=["GET", "POST"])
+@app.route("/holdings", methods=["GET"])
 def holdings():
-    if request.method == "GET":
-        #todo, luo queries-tiedostoon funktio ja kutsu sitä
-        return render_template("holdings.html") #todo: lomake
-    if request.method == "POST":
-        if session["csrf_token"] != request.form["csrf_token"]:
-            abort(403)
-        #todo
+    username = session["username"]
+    report = que.holdings_report(username)
+    if not report:
+        flash("Lisäämilläsi omistajilla ei ole omistuksia.")
+        return redirect("/")
+    return render_template("holdings.html", report=report)
+
+@app.route("/dividends", methods=["GET"])
+def dividends():
+    username = session["username"]
+    report = que.dividend_report(username)
+    if not report:
+        flash("Lisäämilläsi omistajilla ei ole osinkoja\
+              tai osakkeille ei ole lisätty osingon määrää.")
+        return redirect("/")
+    return render_template("dividends.html", report=report)

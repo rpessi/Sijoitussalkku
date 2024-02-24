@@ -14,16 +14,18 @@
     {% endfor %}
     </ul>
     Nimeä arvo-osuustili:<br>
-    <textarea name="account" rows="1" cols="20"></textarea>
+    <textarea name="account" rows="1" cols="20" required></textarea>
     <p>
     <input type="submit" value="Lisää arvo-osuustili">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
     <p>
+    {% if pairs %}
     Lisätyt tilit: 
-    <ul>
-    {% for pair in pairs %}
-        <li>{{pair[0]}}: {{pair[1]}}</li>
-    {% endfor %}
-    </ul>
+        <ul>
+        {% for pair in pairs %}
+            <li>{{pair[0]}}: {{pair[1]}}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
 {% endblock content %}

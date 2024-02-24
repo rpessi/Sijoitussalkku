@@ -1,0 +1,27 @@
+{% extends "layout.html"%}
+{% block title %}Lisää osinko{% endblock %}
+{% block content %}
+    <form action="#" method="POST">
+        Valitse osake:
+        </p>
+        <ul>
+        {% for stock in stocks %}
+        <input type="radio" name="stock" value="{{stock}}" > {{stock}}
+        {% endfor %}
+        </ul>
+        Lisää vuotuinen osinko: <br>
+        <textarea name="dividend" rows="1" cols="20" required></textarea>
+        <p>
+        <input type="submit" value="Lisää osinko">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    </form>
+    <br>
+    {% if dividends %}
+    Lisätyt osingot:
+    <ul>
+        {% for stock, dividend in dividends %}
+            <li>{{ stock }}: {{ dividend }} €</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+{% endblock content %}

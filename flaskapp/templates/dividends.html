@@ -1,0 +1,13 @@
+{% extends "layout.html"%}
+{% block title %}Näytä osingot{% endblock %}
+{% block content %}
+<p>Omistajien hallussa olevien osakkeiden perusteella laskettu vuotuinen osinko.
+    Ennuste olettaa, että nykyiset omistukset pysyvät muuttumattomina osinkojen
+    irtoamispäivään saakka.
+</p>
+<ul>
+    {% for row in report %}
+        <li>{{ row }}</li>
+    {% endfor %}
+</ul>
+{% endblock content %}

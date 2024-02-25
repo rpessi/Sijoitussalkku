@@ -229,11 +229,12 @@ def holdings():
 def dividends():
     username = session["username"]
     report = que.dividend_report(username)
+    top_report = que.top_dividendyields(username)
     if not report:
         flash("Lisäämilläsi omistajilla ei ole osinkoja\
               tai osakkeille ei ole lisätty osingon määrää.")
         return redirect("/")
-    return render_template("dividends.html", report=report)
+    return render_template("dividends.html", report=report, top_report=top_report)
 
 @app.route("/buy_events", methods=["GET"])
 def buy_events():

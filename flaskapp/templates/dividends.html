@@ -23,4 +23,30 @@
     </table>
     <div style="margin-top: 8px;"></div>
 </div>
+<p>Parhaiden tuottavien ostoerien osinkotuotot (osinko/ostohinta)</p>
+<div class="table_component" role="region" tabindex="0">
+    <table>
+        <thead>
+            <tr>
+                <th>Omistaja</th>
+                <th>Osake</th>
+                <th>Pvm</th>
+                <th>Ostohinta (€)</th>
+                <th>Osinkotuotto (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for owner, stock, date, price, yield in top_report %}
+            <tr>
+                <td>{{ owner }}</td>
+                <td>{{ stock }}</td>
+                <td>{{ date }}</td>
+                <td>{{ price }}</td>
+                <td>{{ yield }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div style="margin-top: 8px;"></div>
+</div>
 {% endblock content %}

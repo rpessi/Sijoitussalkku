@@ -241,3 +241,26 @@ def buy_event_report(username):
         newrow = (owner, stock, account, buydate, row.number, buyprice)
         results_formatted.append(newrow)
     return results_formatted
+
+def top_dividendyields(username):
+    user_id = get_user_id(username)
+    sql = text("""SELECT O.name AS owner, B.stock, B.date, B.price,
+               MAX(100*S.dividend/B.price) AS top_yield
+               FROM users U JOIN owners O ON U.id = O.user_id
+               JOIN accounts A ON O.id = A.owner_id
+               JOIN buy_events B ON B.account_id = A.id
+               JOIN stocks S ON B.stock = S.name
+               WHERE U.id =:user_id AND S.user_id = U.id
+               GROUP BY owner, B.stock, B.date, B.price, B.number - B.sold
+               HAVING B.number - B.sold > 0
+               ORDER BY top_yield DESC LIMIT 3""")
+    results = db.session.execute(sql, {"user_id":user_id}).fetchall()
+    results_formatted = []
+    for row in results:
+        owner, stock = row.owner, row.stock
+        date = f"{row.date.day}.{row.date.month}.{row.date.year}"
+        price = round(float(row.price), 2)
+        top_yield = round(float(row.top_yield), 2)
+        newrow = (owner, stock, date, price, top_yield)
+        results_formatted.append(newrow)
+    return results_formatted

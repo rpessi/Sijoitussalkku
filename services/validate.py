@@ -62,3 +62,23 @@ def check_selection(selection):
         if not request.form.get(value):
             return False
     return True
+
+def validate_username(username:str):
+    if len(username) > 20:
+        return False
+    return True
+
+def validate_stock(stock:str):
+    if len(stock) > 30:
+        return False
+    return True
+
+def validate_account_name(name:str):
+    if len(name) > 30:
+        return False
+    return True
+
+def validate_owner(owner:str):
+    if len(owner) > 30:
+        return False
+    return True

@@ -46,6 +46,9 @@ def register():
         if password != pwd_check:
             flash("Virhe salasanan uudelleenkirjoituksessa.")
             return redirect("/register")
+        if not val.validate_username(username):
+            flash("Käyttäjätunnus on liian pitkä.")
+            return redirect("/register")
         setup.add_user(username, password)
         flash("Käyttäjätunnus on luotu, voit nyt kirjautua sisään.")
         return redirect("/")
@@ -67,8 +70,10 @@ def addowner():
             abort(403)
         if not request.form.get("owner"):
             flash("Täytä kenttä.")
-            return redirect("/addowner")
         owner = request.form["owner"]
+        if not val.validate_owner(owner):
+            flash("Omistajan nimi on liian pitkä.")
+            return redirect("/addowner")
         result = setup.add_owner(owner)
         if result:
             return redirect("/addowner")
@@ -86,6 +91,9 @@ def addstock():
             flash("Täytä kenttä.")
             return redirect("/addstock")
         stock = request.form["stock"]
+        if not val.validate_stock(stock):
+            flash("Osakkeen nimi on liian pitkä.")
+            return redirect("/addstock")
         result = setup.add_stock(stock)
         if result:
             return redirect("/addstock")
@@ -130,6 +138,9 @@ def addaccount():
             return redirect("/addaccount")
         owner = request.form["owner"]
         account = request.form["account"]
+        if not val.validate_account(account):
+            flash("Tilin nimi on liian pitkä.")
+            return redirect("/addaccount")
         result = setup.add_account(account, owner)
         if result:
             flash("Tilin lisäys onnistui")

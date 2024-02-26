@@ -138,7 +138,7 @@ def addaccount():
             return redirect("/addaccount")
         owner = request.form["owner"]
         account = request.form["account"]
-        if not val.validate_account(account):
+        if not val.validate_account_name(account):
             flash("Tilin nimi on liian pitkä.")
             return redirect("/addaccount")
         result = setup.add_account(account, owner)

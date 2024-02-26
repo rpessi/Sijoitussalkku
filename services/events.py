@@ -7,9 +7,18 @@ from services import queries as que, validate as val
 def add_event(event_type, owner_name, account_name,
               date, stock, number, price):
     account_id = que.get_account_id(account_name, owner_name)
+    date = remove_0(date)
     if event_type == "sell":
         return add_sell_event(account_id, date, stock, number, price)
     return add_buy_event(account_id, date, stock, number, price)
+
+def remove_0(date):
+    '''A function for removing leading zeros from date input'''
+    parts = date.split(".")
+    for i in range(3):
+        if parts[i][0] == "0":
+            parts[i] = parts[i][1:]
+    return ".".join(parts)
 
 def add_sell_event(account_id, date, stock, number, price):
     result, error_msg = val.validate_sell(account_id, date, stock,

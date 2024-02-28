@@ -2,26 +2,23 @@
 Sovelluksen tarkoitus on säilyttää tietoja sijoituksista ja hyödyntää näitä tietoja veroilmoituksen 
 täyttämisessä sekä sijoitusten hallinnoinnissa ja suunnittelussa. 
 
-### Toiminnallisuuksia, joita sovellukseen pyritään saamaan
-- Käyttäjä pystyy luomaan käyttäjätunnuksen ja kirjautumaan sovellukseen - toteutettu
-- Käyttäjä pystyy lisäämään sovellukseen (sijoitusten) omistajia - toteutettu
-- Käyttäjä pystyy lisäämään sovellukseen valitulle omistajalle arvo-osuustilejä - toteutettu 
-- Käyttäjä pystyy lisäämään sovellukseen osakkeita - toteutettu
-- Käyttäjä pystyy lisäämään nimetyn omistajan nimetylle tilille nimetyn osakkeen osto- tai myyntitapahtuman - toteutettu
-- Käyttäjä pystyy katsomaan tiedot kaikkien omistajien sijoituksista, eriteltynä omistajakohtaisesti - toteutettu
-- Käyttäjä pystyy näkemään, mitkä vuosittaiset osto- ja myyntitapahtumat liittyvät toisiinsa - toteutettu
+### Sovelluksen toiminnallisuudet
+- Käyttäjä pystyy luomaan käyttäjätunnuksen ja kirjautumaan sovellukseen
+- Käyttäjä pystyy lisäämään sovellukseen (sijoitusten) omistajia
+- Käyttäjä pystyy lisäämään sovellukseen valitulle omistajalle arvo-osuustilejä
+- Käyttäjä pystyy lisäämään sovellukseen osakkeita
+- Käyttäjä pystyy lisäämään nimetyn omistajan nimetylle tilille nimetyn osakkeen osto- tai myyntitapahtuman
+- Käyttäjä pystyy katsomaan tiedot kaikkien omistajien sijoituksista, eriteltynä omistajakohtaisesti
+- Käyttäjä pystyy näkemään, mitkä vuosittaiset osto- ja myyntitapahtumat liittyvät toisiinsa
 - Käyttäjä pystyy lisäämään sovellukseen lisätylle osakkeelle vuotuisen osingon määrän
-- Käyttäjä pystyy hakemaan tiedon kunkin omistajan saamista vuotuisista osingoista
-
-### Sovelluksen tämänhetkinen tilanne
-Sovellukseen voi luoda käyttäjätunnuksen ja kirjautua. Sovellukseen voi lisätä omistajia, arvo-osuustilejä ja osakkeita.
-Arvo-osuustilin lisääminen edellyttää, että ainakin yksi omistaja on lisätty. Kun sovelluksessa on lisättyjä omistajia,
-arvo-osuustilejä ja osakkeita, voi käyttäjä lisätä joko osto- tai myyntitapahtuman. Tapahtuman omistaja, tili ja osake
-valitaan tietokantaan tallennetuista vaihtoehdoista. Käyttäjä pystyy katsomaan vuosittaiset myyntitapahtumat, jotka on
-kohdistettu FIFO-periaatteen mukaisiin ostoeriin. Käyttäjä pystyy katsomaan kootut tiedot omistajien osakeomistuksista. 
-
+- Käyttäjä pystyy katsomaan tiedot omistajien saamista vuotuisista osingoista, eriteltynä omistajakohtaisesti
+- Käyttäjä pystyy katsomaan omistajien hallussa olevat osakkeet ostoerittäin
+ 
 ### Sovelluksen toimintaa havainnollistava kaavio
 ![](flaskapp/static/Toimintakaavio.png)
+
+Kaavio kuvaa, kuinka käyttäjän lisäämät Omistajat, Tilit, Osakkeet, Ostotapahtumat ja Myyntitapahtumat kytkeytyvät toisiinsa. Käyttäjän kannattaa edetä sovelluksen käytössä ensimmäisellä kerralla kirjautumisen jälkeen ylempää linkkiriviä pitkin vasemmalta oikealle, jotta pääsee lisäämään tapahtumia ja katsomaan raportteja.
+![](images/starting_view.png)
 
 ### Sovelluksen käyttö
 Sovelluksen käyttö edellyttää projektin lataamista omalle koneelle. Sovellus vaatii toimiakseen myös

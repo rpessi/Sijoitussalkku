@@ -1,200 +1,208 @@
 '''A module for database queries'''
 
-from flaskapp.db import db
 from sqlalchemy import text
+from flaskapp.db import db
 
-def get_account_id(account_name, owner_name):
-    sql = text("""SELECT A.id FROM accounts A, owners O
+def get_account_id(account_name:str, owner_name:str) -> str:
+    sql = text(
+            """SELECT A.id FROM accounts A, owners O
                WHERE A.owner_id = O.id AND O.name =:owner_name
-               AND A.name=:account_name""")
+               AND A.name=:account_name"""
+               )
     acc_id = db.session.execute(sql, {"owner_name":owner_name,
                             "account_name":account_name}).fetchone()
     db.session.commit()
     return acc_id[0]
 
-def get_full_buy_events():
-    sqlb = text("""SELECT O.name, A.name, B.date, B.stock, B.number, B.price
-                FROM owners O, accounts A, buy_events B
-                WHERE O.id = A.owner_id AND B.account_id = A.id""")
+def get_full_buy_events() -> list:
+    sqlb = text(
+            """SELECT O.name, A.name, B.date, B.stock, B.number, B.price
+               FROM owners O, accounts A, buy_events B
+               WHERE O.id = A.owner_id AND B.account_id = A.id"""
+                )
     buy_events = db.session.execute(sqlb).fetchall()
     db.session.commit()
     if not buy_events:
         return []
     return buy_events
 
-def get_buy_events(owner_name, account_name, stock):
-    '''For showing the events for the user'''
-    sql = text("""SELECT B.id, B.date, B.stock, B.number, B.sold
-                FROM owners O, accounts A, buy_events B
-                WHERE O.id = A.owner_id AND B.account_id = A.id
-                AND B.sold < B.number AND A.name = :account_name AND
-                O.name = :owner_name AND B.stock = :stock
-                ORDER BY B.date ASC""")
+def get_buy_events(owner_name:str, account_name:str, stock:str) -> list:
+    '''A function for showing the events for the user'''
+    sql = text(
+            """SELECT B.id, B.date, B.stock, B.number, B.sold
+               FROM owners O, accounts A, buy_events B
+               WHERE O.id = A.owner_id AND B.account_id = A.id
+               AND B.sold < B.number AND A.name = :account_name AND
+               O.name = :owner_name AND B.stock = :stock
+               ORDER BY B.date ASC"""
+                )
     buy_events = db.session.execute(sql, {"account_name":account_name,
                     "stock":stock, "owner_name":owner_name}).fetchall()
     db.session.commit()
     return buy_events
 
-def check_user_exists(username):
+def check_user_exists(username:str) -> bool:
     sql = text("SELECT username FROM users WHERE username=:username")
     user = db.session.execute(sql, {"username":username}).fetchone()
     if not user:
         return False
     return True
 
-def get_owner_id(name):
+def get_owner_id(name:str) -> str:
     sql = text("SELECT id FROM owners  WHERE name=:name")
     owner_id = db.session.execute(sql, {"name":name}).fetchone()
     return owner_id[0]
 
-def get_user_id(username):
+def get_user_id(username:str) -> str:
     sql = text("SELECT id FROM users  WHERE username=:username")
     user_id = db.session.execute(sql, {"username":username}).fetchone()
     return user_id[0]
 
-def accounts_by_owner(owner_id):
+def accounts_by_owner(owner_id:str) -> list:
     sql = text("SELECT name FROM accounts WHERE owner_id=:owner_id")
     accountdata = db.session.execute(sql, {"owner_id":owner_id}).fetchall()
-    accountnames = []
-    for account in accountdata:
-        accountnames.append(account[0])
-    return accountnames
+    return [account[0] for account in accountdata]
 
-def owners_from_db(username):
+def owners_from_db(username:str) -> list:
     user_id = get_user_id(username)
-    sql = text("""SELECT name FROM owners O, users U
-               WHERE O.user_id = U.id AND U.id=:user_id""")
-    ownertuples = db.session.execute(sql, {"user_id":user_id}).fetchall()
-    db.session.commit()
-    owners = []
-    for owner in ownertuples:
-        owners.append(owner[0])
-    return owners
-
-def accounts_from_db(username):
-    user_id = get_user_id(username)
-    sql = text("""SELECT DISTINCT A.name FROM accounts A, owners O, users U
-               WHERE A.owner_id = O.id AND U.id = O.user_id
-               AND U.id=:user_id""")
-    accounttuples = db.session.execute(sql, {"user_id":user_id}).fetchall()
-    db.session.commit()
-    accounts = []
-    for account in accounttuples:
-        accounts.append(account[0])
-    return accounts
-
-def stocks_from_db(username):
-    user_id = get_user_id(username)
-    sql = text("""SELECT name FROM stocks WHERE user_id=:user_id
-               ORDER BY name ASC""")
-    stocktuples = db.session.execute(sql, {"user_id":user_id}).fetchall()
-    db.session.commit()
-    stocks = []
-    for stock in stocktuples:
-        stocks.append(stock[0])
-    return stocks
-
-def dividends_from_db(username):
-    user_id = get_user_id(username)
-    sql = text("""SELECT name, dividend FROM stocks WHERE user_id =:user_id
-               ORDER BY name ASC""")
+    sql = text(
+            """SELECT name FROM owners O, users U
+               WHERE O.user_id = U.id AND U.id=:user_id"""
+               )
     result = db.session.execute(sql, {"user_id":user_id}).fetchall()
-    dividends = []
-    for row in result:
-        if row.dividend > 0:
-            dividends.append((row.name, row.dividend))
-    return dividends
+    db.session.commit()
+    return [owner[0] for owner in result]
 
-def stocks_available_for_sell(account_id, stock):
-    sql = text("""SELECT SUM(number) - SUM(sold) as available
+def accounts_from_db(username:str) -> list:
+    user_id = get_user_id(username)
+    sql = text(
+            """SELECT DISTINCT A.name FROM accounts A, owners O, users U
+               WHERE A.owner_id = O.id AND U.id = O.user_id
+               AND U.id=:user_id"""
+               )
+    result = db.session.execute(sql, {"user_id":user_id}).fetchall()
+    db.session.commit()
+    return [account[0] for account in result]
+
+def stocks_from_db(username:str) -> list:
+    user_id = get_user_id(username)
+    sql = text(
+            """SELECT name FROM stocks WHERE user_id=:user_id
+               ORDER BY name ASC"""
+               )
+    result = db.session.execute(sql, {"user_id":user_id}).fetchall()
+    db.session.commit()
+    return [stock[0] for stock in result]
+
+def dividends_from_db(username:str) -> list:
+    user_id = get_user_id(username)
+    sql = text(
+            """SELECT name, dividend
+               FROM stocks WHERE user_id =:user_id
+               ORDER BY name ASC"""
+               )
+    result = db.session.execute(sql, {"user_id":user_id}).fetchall()
+    return [(row.name, row.dividend) for row in result if row.dividend > 0]
+
+def stocks_available_for_sell(account_id:str, stock:str) -> int:
+    sql = text(
+            """SELECT SUM(number) - SUM(sold) as available
                FROM buy_events
-               WHERE account_id =:account_id AND stock =:stock""")
+               WHERE account_id =:account_id AND stock =:stock"""
+               )
     result = db.session.execute(sql, {"account_id":account_id,
                                       "stock":stock}).fetchone()
     if not result:
         return 0
     return int(result[0])
 
-def buys_for_pairing(account_id, stock):
-    sql = text("""SELECT B.id, B.date, B.stock, B.number, B.sold
+def buys_for_pairing(account_id:str, stock:str) -> list:
+    sql = text(
+            """SELECT B.id, B.date, B.stock, B.number, B.sold
                FROM accounts A, buy_events B
                WHERE B.account_id = A.id AND B.sold < B.number
                AND A.id =:account_id AND B.stock =:stock
-               ORDER BY B.date ASC""")
+               ORDER BY B.date ASC"""
+               )
     buy_events = db.session.execute(sql, {"account_id":account_id,
                                           "stock":stock}).fetchall()
-    db.session.commit()
     return buy_events
 
-def get_sell_event_id(account_id, date, stock, number, price):
-    sql = text("""SELECT id FROM sell_events WHERE account_id =:account_id
-           AND date =:date AND stock =:stock AND number =:number
-           AND price =:price""")
+def get_sell_event_id(account_id:str, date:str, stock:str, number:str, price:str) -> str:
+    sql = text(
+            """SELECT id FROM sell_events WHERE account_id =:account_id
+               AND date =:date AND stock =:stock AND number =:number
+               AND price =:price"""
+               )
     result = db.session.execute(sql, {"account_id":account_id, "date":date,
                         "stock":stock, "number":number, "price":price}).fetchone()
-    db.session.commit()
     return result[0]
 
-def get_password(username):
-    sql = text("SELECT id, password FROM users WHERE username=:username")
-    result = db.session.execute(sql, {"username":username})
-    user = result.fetchone()
-    return user.password
-
-def get_owner_account_pairs(username):
+def get_password(username:str) -> str:
     user_id = get_user_id(username)
-    sql = text("""SELECT O.name AS owner, A.name AS account FROM owners O
+    sql = text("SELECT id, password FROM users WHERE users.id=:user_id")
+    result = db.session.execute(sql, {"user_id":user_id}).fetchone()
+    return result.password
+
+def get_owner_account_pairs(username:str) -> list:
+    user_id = get_user_id(username)
+    sql = text(
+            """SELECT O.name AS owner, A.name AS account FROM owners O
                INNER JOIN accounts A ON O.id = A.owner_id
-               WHERE O.user_id =:user_id""")
+               WHERE O.user_id =:user_id"""
+               )
     pairs = db.session.execute(sql, {"user_id":user_id}).fetchall()
     return pairs
 
-def get_years_with_sell_events(username):
+def get_years_with_sell_events(username:str) -> list:
     user_id = get_user_id(username)
-    sql = text("""SELECT DISTINCT EXTRACT(year FROM S.date) as year
+    sql = text(
+            """SELECT DISTINCT EXTRACT(year FROM S.date) as year
                FROM sell_events S, accounts A, owners O, users U
                WHERE S.account_id = A.id AND A.owner_id = O.id
-               AND O.user_id = U.id AND U.id =:user_id""")
+               AND O.user_id = U.id AND U.id =:user_id"""
+               )
     results = db.session.execute(sql, {"user_id":user_id}).fetchall()
-    years = []
-    if results:
-        for result in results:
-            years.append(result[0])
-    return years
+    return [result[0] for result in results]
 
-def sell_events_by_year(selected_year, username):
+def sell_events_by_year(selected_year:str, username:str) -> list:
     user_id = get_user_id(username)
-    sql = text("""SELECT O.name AS owner, A.name AS account, B.date AS buydate, B.stock,
-                P.number, P.number*B.price AS buytotal, S.date AS selldate,
-                P.number*S.price AS selltotal
-                FROM users U JOIN owners O ON U.id = O.user_id
-                JOIN accounts A ON A.owner_id = O.id
-                JOIN buy_events B ON B.account_id = A.id
-                JOIN pairing P ON B.id = P.buy_id
-                JOIN sell_events S ON P.sell_id = S.id
-                WHERE EXTRACT(year FROM S.date) =:selected_year AND U.id =:user_id
-                ORDER BY owner, account, B.stock, selldate ASC""")
+    sql = text(
+            """SELECT O.name AS owner, A.name AS account, B.date AS buydate, B.stock,
+               P.number, P.number*B.price AS buytotal, S.date AS selldate,
+               P.number*S.price AS selltotal
+               FROM users U JOIN owners O ON U.id = O.user_id
+               JOIN accounts A ON A.owner_id = O.id
+               JOIN buy_events B ON B.account_id = A.id
+               JOIN pairing P ON B.id = P.buy_id
+               JOIN sell_events S ON P.sell_id = S.id
+               WHERE EXTRACT(year FROM S.date) =:selected_year AND U.id =:user_id
+               ORDER BY owner, account, B.stock, selldate ASC"""
+                )
     results = db.session.execute(sql, {"selected_year":selected_year, "user_id":user_id}).fetchall()
     results_formatted = []
     for row in results:
         buydate = f"{row.buydate.day}.{row.buydate.month}.{row.buydate.year}"
-        stock, number, buytotal = row.stock, row.number, round(float(row.buytotal),2)
+        stock, number, buytotal = row.stock, row.number, round(float(row.buytotal), 2)
         selldate = f"{row.selldate.day}.{row.selldate.month}.{row.selldate.year}"
         selltotal = round(float(row.selltotal), 2)
         newrow = (row.owner, row.account, buydate, stock, number, buytotal, selldate, selltotal)
         results_formatted.append(newrow)
     return results_formatted
 
-def holdings_report(username):
-    sql = text("""SELECT O.name as owner, B.stock, SUM(B.number-B.sold) as number,
+def holdings_report(username:str) -> list:
+    user_id = get_user_id(username)
+    sql = text(
+            """SELECT O.name as owner, B.stock, SUM(B.number-B.sold) as number,
                (SUM((B.number-B.sold)*B.price)/SUM(B.number-B.sold)) AS avgprice
                FROM users U JOIN owners O on U.id = O.user_id
                JOIN accounts A ON A.owner_id = O.id
                JOIN buy_events B ON B.account_id = A.id
-               WHERE U.username =:username
+               WHERE U.id =:user_id
                GROUP BY owner, B.stock HAVING SUM(B.number-B.sold) > 0
-               ORDER BY owner, B.stock ASC""")
-    results = db.session.execute(sql, {"username":username}).fetchall()
+               ORDER BY owner, B.stock ASC"""
+               )
+    results = db.session.execute(sql, {"user_id":user_id}).fetchall()
     results_formatted = []
     for row in results:
         owner, stock, number = row.owner, row.stock, row.number
@@ -203,17 +211,20 @@ def holdings_report(username):
         results_formatted.append(newrow)
     return results_formatted
 
-def dividend_report(username):
-    sql = text("""SELECT O.name AS owner, B.stock, SUM(B.number-B.sold) AS number,
+def dividend_report(username:str) -> list:
+    user_id = get_user_id(username)
+    sql = text(
+            """SELECT O.name AS owner, B.stock, SUM(B.number-B.sold) AS number,
                SUM(B.number-B.sold)*S.dividend AS dividends
                FROM users U JOIN owners O ON U.id = O.user_id
                JOIN accounts A ON A.owner_id = O.id
                JOIN buy_events B ON B.account_id = A.id
                JOIN stocks S ON B.stock = S.name
-               WHERE U.username =:username AND S.user_id = U.id
+               WHERE U.id =:user_id AND S.user_id = U.id
                GROUP BY owner, B.stock, S.dividend HAVING SUM(B.number-B.sold) > 0
-               ORDER BY owner, B.stock ASC""")
-    results = db.session.execute(sql, {"username":username}).fetchall()
+               ORDER BY owner, B.stock ASC"""
+               )
+    results = db.session.execute(sql, {"user_id":user_id}).fetchall()
     results_formatted = []
     for row in results:
         owner, stock, number = row.owner, row.stock, row.number
@@ -222,16 +233,18 @@ def dividend_report(username):
         results_formatted.append(newrow)
     return results_formatted
 
-def buy_event_report(username):
+def buy_event_report(username:str) -> list:
     '''A function for reporting stocks available for sell'''
     user_id = get_user_id(username)
-    sql = text("""SELECT O.name AS owner, B.stock, A.name AS account, B.date as buydate,
+    sql = text(
+            """SELECT O.name AS owner, B.stock, A.name AS account, B.date as buydate,
                B.number-B.sold as number, B.price as buyprice
                FROM users U JOIN owners O ON U.id = O.user_id
                JOIN accounts A ON O.id = A.owner_ID
                JOIN buy_events B on B.account_id = A.id
                WHERE U.id =:user_id AND B.number-B.sold > 0
-               ORDER BY owner, B.stock, account, buydate ASC""")
+               ORDER BY owner, B.stock, account, buydate ASC"""
+               )
     results = db.session.execute(sql, {"user_id":user_id}).fetchall()
     results_formatted = []
     for row in results:
@@ -242,9 +255,11 @@ def buy_event_report(username):
         results_formatted.append(newrow)
     return results_formatted
 
-def top_dividendyields(username):
+def top_dividendyields(username:str) -> list:
+    '''A function for finding best dividend yield for each owner'''
     user_id = get_user_id(username)
-    sql = text("""SELECT O.name AS owner, B.stock, B.date, B.price,
+    sql = text(
+            """SELECT DISTINCT ON (O.name) O.name AS owner, B.stock, B.date, B.price,
                MAX(100*S.dividend/B.price) AS top_yield
                FROM users U JOIN owners O ON U.id = O.user_id
                JOIN accounts A ON O.id = A.owner_id
@@ -253,7 +268,8 @@ def top_dividendyields(username):
                WHERE U.id =:user_id AND S.user_id = U.id
                GROUP BY owner, B.stock, B.date, B.price, B.number - B.sold
                HAVING B.number - B.sold > 0
-               ORDER BY top_yield DESC LIMIT 3""")
+               ORDER BY owner, top_yield DESC"""
+               )
     results = db.session.execute(sql, {"user_id":user_id}).fetchall()
     results_formatted = []
     for row in results:

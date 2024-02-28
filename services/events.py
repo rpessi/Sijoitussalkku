@@ -4,15 +4,16 @@ from sqlalchemy import text
 from flaskapp.db import db
 from services import queries as que, validate as val
 
-def add_event(event_type, owner_name, account_name,
-              date, stock, number, price):
+def add_event(event_type: str, owner_name: str, account_name: str,
+              date: str, stock: str, number: str, price: str) -> tuple:
+    '''A function for adding a sell- or buy-event'''
     account_id = que.get_account_id(account_name, owner_name)
     date = remove_0(date)
     if event_type == "sell":
         return add_sell_event(account_id, date, stock, number, price)
     return add_buy_event(account_id, date, stock, number, price)
 
-def remove_0(date):
+def remove_0(date:str) -> str:
     '''A function for removing leading zeros from date input'''
     parts = date.split(".")
     for i in range(3):
@@ -20,14 +21,14 @@ def remove_0(date):
             parts[i] = parts[i][1:]
     return ".".join(parts)
 
-def add_sell_event(account_id, date, stock, number, price):
-    result, error_msg = val.validate_sell(account_id, date, stock,
-                                        number, price)
+def add_sell_event(account_id:str, date:str, stock:str, number:str, price:str) -> tuple:
+    result, error_msg = val.validate_sell(account_id, date, stock, number, price)
     if not result:
         return (False, error_msg)
-    sql = text("""INSERT INTO sell_events
-               (account_id, date, stock, number, price)
-               VALUES (:account_id, :date, :stock, :number, :price)""")
+    sql = text(
+            """INSERT INTO sell_events (account_id, date, stock, number, price)
+               VALUES (:account_id, :date, :stock, :number, :price)"""
+               )
     db.session.execute(sql, {"account_id":account_id, "date":date,\
                             "stock":stock, "number":number, "price":price})
     db.session.commit()
@@ -35,19 +36,20 @@ def add_sell_event(account_id, date, stock, number, price):
     pairing(account_id, stock, sell_id, number)
     return (True, "")
 
-def add_buy_event(account_id, date, stock, number, price):
+def add_buy_event(account_id:str, date:str, stock:str, number:str, price:str) -> tuple:
     result, error_msg = val.validate_buy(date, number, price)
     if not result:
         return (False, error_msg)
-    sql = text("""INSERT INTO buy_events
-               (account_id, date, stock, number, price, sold)
-               VALUES (:account_id, :date, :stock, :number, :price, :sold)""")
+    sql = text(
+            """INSERT INTO buy_events (account_id, date, stock, number, price, sold)
+               VALUES (:account_id, :date, :stock, :number, :price, :sold)"""
+               )
     db.session.execute(sql, {"account_id":account_id, "date":date, "stock":stock,
                         "number":number, "price":price, "sold":0})
     db.session.commit()
     return (True, "")
 
-def pairing(account_id, stock, sell_id, number):
+def pairing(account_id:str, stock:str, sell_id:str, number:str) -> None:
     '''A function for pairing sell- and buy-events according to FIFO-principle'''
     buy_events = que.buys_for_pairing(account_id, stock)
     sell_number = int(number)
@@ -63,14 +65,18 @@ def pairing(account_id, stock, sell_id, number):
         if sell_number == 0:
             break
 
-def update_buy_event(buy_id, sold_new):
-    sql = text("""UPDATE buy_events SET sold =:sold_new
-               WHERE id =:buy_id""")
+def update_buy_event(buy_id:str, sold_new:str) -> None:
+    sql = text(
+            """UPDATE buy_events SET sold =:sold_new
+               WHERE id =:buy_id"""
+               )
     db.session.execute(sql, {"sold_new":sold_new, "buy_id":buy_id})
     db.session.commit()
 
-def update_pairing_table(buy_id, sell_id, number):
-    sql = text("""INSERT INTO pairing (buy_id, sell_id, number)
-               VALUES (:buy_id, :sell_id, :number)""")
+def update_pairing_table(buy_id:str, sell_id:str, number:str) -> None:
+    sql = text(
+            """INSERT INTO pairing (buy_id, sell_id, number)
+               VALUES (:buy_id, :sell_id, :number)"""
+               )
     db.session.execute(sql, {"buy_id":buy_id, "sell_id":sell_id, "number":number})
     db.session.commit()

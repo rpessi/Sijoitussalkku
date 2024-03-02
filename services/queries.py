@@ -122,7 +122,8 @@ def get_owner_account_pairs(username:str) -> list:
     sql = text(
             """SELECT O.name AS owner, A.name AS account FROM owners O
                INNER JOIN accounts A ON O.id = A.owner_id
-               WHERE O.user_id =:user_id"""
+               WHERE O.user_id =:user_id
+               ORDER BY owner, account ASC"""
                )
     pairs = db.session.execute(sql, {"user_id":user_id}).fetchall()
     return pairs

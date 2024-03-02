@@ -1,5 +1,6 @@
 '''A module for handling sell- and buy_events'''
 
+from flask import session
 from sqlalchemy import text
 from flaskapp.db import db
 from services import queries as que, validate as val
@@ -7,7 +8,8 @@ from services import queries as que, validate as val
 def add_event(event_type: str, owner_name: str, account_name: str,
               date: str, stock: str, number: str, price: str) -> tuple:
     '''A function for adding a sell- or buy-event'''
-    account_id = que.get_account_id(account_name, owner_name)
+    username = session["username"]
+    account_id = que.get_account_id(account_name, owner_name, username)
     date = remove_0(date)
     if event_type == "sell":
         return add_sell_event(account_id, date, stock, number, price)

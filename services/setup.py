@@ -3,8 +3,8 @@
 from flask import session
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash
-from services import queries as que
 from flaskapp.db import db
+from services import queries as que
 
 def add_user(username:str, password:str) -> None:
     pwd_hashed = generate_password_hash(password)
@@ -41,7 +41,8 @@ def add_stock(name:str, dividend=0) -> bool:
     return False
 
 def add_account(name:str, owner:str) -> bool:
-    owner_id = que.get_owner_id(owner)
+    username = session["username"]
+    owner_id = que.get_owner_id(owner, username)
     accounts = que.accounts_by_owner(owner_id)
     if name not in accounts:
         sql = text("INSERT INTO accounts (name, owner_id) VALUES (:name, :owner_id)")

@@ -56,6 +56,11 @@ def register():
 
 @app.route("/logout")
 def logout():
+    try:
+        username = session["username"]
+    except KeyError:
+        flash("Et ole kirjautunut sisään.")
+        return redirect("/")
     del session["username"]
     del session["csrf_token"]
     del session["pre_token"]
@@ -64,6 +69,11 @@ def logout():
 
 @app.route("/addowner", methods=["GET", "POST"])
 def addowner():
+    try:
+        username = session["username"]
+    except KeyError:
+        flash("Et ole kirjautunut sisään.")
+        return redirect("/")
     owners = que.owners_from_db(session["username"])
     if request.method == "POST":
         if session["csrf_token"] != request.form["csrf_token"]:
@@ -83,6 +93,11 @@ def addowner():
 
 @app.route("/addstock", methods=["GET", "POST"])
 def addstock():
+    try:
+        username = session["username"]
+    except KeyError:
+        flash("Et ole kirjautunut sisään.")
+        return redirect("/")
     stocks = que.stocks_from_db(session["username"])
     if request.method == "POST":
         if session["csrf_token"] != request.form["csrf_token"]:
@@ -103,6 +118,11 @@ def addstock():
 
 @app.route("/add_dividend", methods=["GET", "POST"])
 def add_dividend():
+    try:
+        username = session["username"]
+    except KeyError:
+        flash("Et ole kirjautunut sisään.")
+        return redirect("/")
     stocks = que.stocks_from_db(session["username"])
     db_dividends = que.dividends_from_db(session["username"])
     if request.method == "POST":
@@ -127,6 +147,11 @@ def add_dividend():
 
 @app.route("/addaccount", methods=["GET", "POST"])
 def addaccount():
+    try:
+        username = session["username"]
+    except KeyError:
+        flash("Et ole kirjautunut sisään.")
+        return redirect("/")
     owners = que.owners_from_db(session["username"])
     pairs = que.get_owner_account_pairs(session["username"])
     if request.method == "POST":
@@ -155,7 +180,11 @@ def addaccount():
 
 @app.route("/addevent", methods=["GET"])
 def addevent():
-    username = session["username"]
+    try:
+        username = session["username"]
+    except KeyError:
+        flash("Et ole kirjautunut sisään.")
+        return redirect("/")
     pairs = que.get_owner_account_pairs(username)
     stocks = que.stocks_from_db(username)
     if not pairs:
@@ -169,6 +198,11 @@ def addevent():
 
 @app.route("/event", methods=["POST"])
 def event():
+    try:
+        username = session["username"]
+    except KeyError:
+        flash("Et ole kirjautunut sisään.")
+        return redirect("/")
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
     selection = ["event_type", "pair", "date", "stock",
@@ -199,7 +233,11 @@ def event():
 
 @app.route("/sell_events", methods=["GET", "POST"])
 def sell_events():
-    username = session["username"]
+    try:
+        username = session["username"]
+    except KeyError:
+        flash("Et ole kirjautunut sisään.")
+        return redirect("/")
     years = que.get_years_with_sell_events(username)
     if request.method == "POST":
         if session["csrf_token"] != request.form["csrf_token"]:
@@ -218,7 +256,11 @@ def sell_events():
 
 @app.route("/holdings", methods=["GET"])
 def holdings():
-    username = session["username"]
+    try:
+        username = session["username"]
+    except KeyError:
+        flash("Et ole kirjautunut sisään.")
+        return redirect("/")
     report = que.holdings_report(username)
     if not report:
         flash("Lisäämilläsi omistajilla ei ole omistuksia.")
@@ -227,7 +269,11 @@ def holdings():
 
 @app.route("/dividends", methods=["GET"])
 def dividends():
-    username = session["username"]
+    try:
+        username = session["username"]
+    except KeyError:
+        flash("Et ole kirjautunut sisään.")
+        return redirect("/")
     report = que.dividend_report(username)
     top_report = que.top_dividendyields(username)
     if not report:
@@ -238,7 +284,11 @@ def dividends():
 
 @app.route("/buy_events", methods=["GET"])
 def buy_events():
-    username = session["username"]
+    try:
+        username = session["username"]
+    except KeyError:
+        flash("Et ole kirjautunut sisään.")
+        return redirect("/")
     report = que.buy_event_report(username)
     if not report:
         flash("Myytävissä olevia osakkeita ei ole.")

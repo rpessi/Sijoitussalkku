@@ -17,11 +17,13 @@ täyttämisessä sekä sijoitusten hallinnoinnissa ja suunnittelussa.
 ### Sovelluksen toimintaa havainnollistava kaavio
 ![](flaskapp/static/Toimintakaavio.png)
 
-Kaavio kuvaa, kuinka käyttäjän lisäämät Omistajat, Tilit, Osakkeet, Ostotapahtumat ja Myyntitapahtumat kytkeytyvät toisiinsa. Käyttäjän kannattaa edetä sovelluksen käytössä ensimmäisellä kerralla kirjautumisen jälkeen ylempää linkkiriviä pitkin vasemmalta oikealle, jotta pääsee lisäämään tapahtumia ja katsomaan raportteja.
+Kaavio kuvaa, kuinka Käyttäjän lisäämät Omistajat, Tilit, Osakkeet, Ostotapahtumat ja Myyntitapahtumat kytkeytyvät toisiinsa. Käyttäjän kannattaa edetä sovelluksen käytössä ensimmäisellä kerralla kirjautumisen jälkeen ylempää linkkiriviä pitkin vasemmalta oikealle, jotta pääsee lisäämään tapahtumia ja katsomaan raportteja.
 ![](images/starting_view.png)
 
 ### Sovelluksen käyttö
-Sovelluksen käyttö edellyttää projektin lataamista omalle koneelle. Sovellus vaatii toimiakseen myös
+Sovelluksen tuotantoversio on mahdollisesti kokeiltavana  [täällä](https://riitta.pessi.fi). Tuotantopalvelimelle on luotu käyttäjätunnus _demouser_ salasanalla _tsohademo_, jolla on tallennettu tietokantaan jonkin verran tietoja valmiiksi sovelluksen helpompaa kokeilua varten. 
+
+Sovelluksen käyttö saattaa edellyttää projektin lataamista omalle koneelle. Sovellus vaatii toimiakseen myös
 Postgres-tietokannan. Lisäksi projektin juureen pitää lisätä tiedosto .env jonka sisällöksi tulee:
 ```bash
 DATABASE_URL=postgresql+psycopg2:///<oma käyttäjätunnus>

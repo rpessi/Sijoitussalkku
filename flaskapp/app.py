@@ -1,8 +1,10 @@
 """A module for initializing the app object"""
 
+from dotenv import load_dotenv
 from os import getenv
 from flask import Flask
 
+load_dotenv()
 app = Flask(__name__)
 app.secret_key = getenv("SECRET_KEY")
 

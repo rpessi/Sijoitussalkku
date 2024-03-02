@@ -163,7 +163,7 @@ def get_years_with_sell_events(username:str) -> list:
                AND O.user_id = U.id AND U.id =:user_id"""
                )
     results = db.session.execute(sql, {"user_id":user_id}).fetchall()
-    return [result[0] for result in results]
+    return [int(result.year) for result in results]
 
 def sell_events_by_year(selected_year:str, username:str) -> list:
     user_id = get_user_id(username)

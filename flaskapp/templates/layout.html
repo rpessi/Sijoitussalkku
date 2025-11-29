@@ -16,7 +16,8 @@
             <li>{{ message }}</li>
             {% endfor %}
         </ul>
-        {% endif %} {% endwith %} {% if session.username %}
+        {% endif %} {% endwith %}
+        {% if session.username %}
         <p>Olet kirjautunut nimellä {{ session.username }}</p>
         <div class="button-group">
             <a href="/addowner">Lisää omistaja</a>
@@ -45,8 +46,6 @@
             <input type="hidden" name="pre_token" value="{{ session.pre_token }}" />
             <p></p>
         </form>
-
-        <a href="/register">Luo tunnus</a>
         {% endif %}
         <hr />
         {% block content %} {% endblock content %}

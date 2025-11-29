@@ -1,6 +1,6 @@
 ## Sijoitussalkku - sovellus sijoitusten hallintaan
-Sovelluksen tarkoitus on säilyttää tietoja sijoituksista ja hyödyntää näitä tietoja veroilmoituksen 
-täyttämisessä sekä sijoitusten hallinnoinnissa ja suunnittelussa. 
+Sovelluksen tarkoitus on säilyttää tietoja sijoituksista ja hyödyntää näitä tietoja veroilmoituksen
+täyttämisessä sekä sijoitusten hallinnoinnissa ja suunnittelussa.
 
 ### Sovelluksen toiminnallisuudet
 - Käyttäjä pystyy luomaan käyttäjätunnuksen ja kirjautumaan sovellukseen
@@ -13,7 +13,7 @@ täyttämisessä sekä sijoitusten hallinnoinnissa ja suunnittelussa.
 - Käyttäjä pystyy lisäämään sovellukseen lisätylle osakkeelle vuotuisen osingon määrän
 - Käyttäjä pystyy katsomaan tiedot omistajien saamista vuotuisista osingoista, eriteltynä omistajakohtaisesti
 - Käyttäjä pystyy katsomaan omistajien hallussa olevat osakkeet ostoerittäin
- 
+
 ### Sovelluksen toimintaa havainnollistava kaavio
 ![](flaskapp/static/Toimintakaavio.png)
 
@@ -21,15 +21,14 @@ Kaavio kuvaa, kuinka Käyttäjän lisäämät Omistajat, Tilit, Osakkeet, Ostota
 ![](images/starting_view.png)
 
 ### Sovelluksen käyttö
-Sovelluksen tuotantoversio on mahdollisesti kokeiltavana  [täällä](https://riitta.pessi.fi). Tuotantopalvelimelle on luotu käyttäjätunnus _demouser_ salasanalla _tsohademo_, jolla on tallennettu tietokantaan jonkin verran tietoja valmiiksi sovelluksen helpompaa kokeilua varten. 
+Sovelluksen tuotantoversio on toistaiseksi kokeiltavana  [täällä](https://riitta.pessi.fi). Tuotantopalvelimelle on luotu käyttäjätunnus _demouser_ salasanalla _tsohademo_, jolla on tallennettu tietokantaan jonkin verran tietoja valmiiksi sovelluksen helpompaa kokeilua varten. Sovelluksen tuotantoversiosta on poistettu mahdollisuus uuden käyttäjän luomiseen. Tuotantoversio on reposition server-haarassa.
 
-Sovelluksen käyttö saattaa edellyttää projektin lataamista omalle koneelle. Sovellus vaatii toimiakseen myös
-Postgres-tietokannan. Lisäksi projektin juureen pitää lisätä tiedosto .env jonka sisällöksi tulee:
+Sovelluksen lokaaliversion (main-haara) kokeilu edellyttää repositorion kloonaamista omalle koneelle. Sovellus vaatii toimiakseen myös Postgres-tietokannan. Lisäksi projektin juureen pitää lisätä tiedosto .env jonka sisällöksi tulee:
 ```bash
 DATABASE_URL=postgresql+psycopg2:///<oma käyttäjätunnus>
 SECRET_KEY=<itsemuodostettu salasana>
 ```
-Virtuaaliympäristö käynnistetään komennoilla 
+Virtuaaliympäristö käynnistetään komennoilla
 ```
 python3 -m venv venv
 ```

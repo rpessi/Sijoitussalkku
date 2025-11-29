@@ -28,32 +28,6 @@ def login():
     flash("Käyttäjätunnus ja salasana eivät täsmää.")
     return redirect("/")
 
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
-        if session["pre_token"] != request.form["pre_token"]:
-            abort(403)
-        selection = ["username", "password", "pwd_check"]
-        if not val.check_selection(selection):
-            flash("Täytä kaikki kentät.")
-            return redirect("/register")
-        username = request.form["username"]
-        password = request.form["password"]
-        pwd_check = request.form["pwd_check"]
-        if que.check_user_exists(username):
-            flash("Käyttäjätunnus on varattu, valitse uusi.")
-            return redirect("/register")
-        if password != pwd_check:
-            flash("Virhe salasanan uudelleenkirjoituksessa.")
-            return redirect("/register")
-        if not val.validate_username(username):
-            flash("Käyttäjätunnus on liian pitkä.")
-            return redirect("/register")
-        setup.add_user(username, password)
-        flash("Käyttäjätunnus on luotu, voit nyt kirjautua sisään.")
-        return redirect("/")
-    return render_template("register.html")
-
 @app.route("/logout")
 def logout():
     try:
